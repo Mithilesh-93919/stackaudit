@@ -40,6 +40,7 @@ export const TOOL_REGISTRY: Record<ToolId, ToolDefinition> = {
         plan: "team",
       },
     ],
+    website: "https://cursor.com",
   },
 
   "github-copilot": {
@@ -68,6 +69,7 @@ export const TOOL_REGISTRY: Record<ToolId, ToolDefinition> = {
         plan: "enterprise",
       },
     ],
+    website: "https://github.com/settings/copilot",
   },
 
   claude: {
@@ -105,6 +107,7 @@ export const TOOL_REGISTRY: Record<ToolId, ToolDefinition> = {
         plan: "enterprise",
       },
     ],
+    website: "https://claude.ai/settings/billing",
   },
 
   chatgpt: {
@@ -141,6 +144,7 @@ export const TOOL_REGISTRY: Record<ToolId, ToolDefinition> = {
         plan: "enterprise",
       },
     ],
+    website: "https://chatgpt.com/#settings/billing",
   },
 
   "anthropic-api": {
@@ -156,6 +160,7 @@ export const TOOL_REGISTRY: Record<ToolId, ToolDefinition> = {
         plan: "api",
       },
     ],
+    website: "https://console.anthropic.com/settings/billing",
   },
 
   "openai-api": {
@@ -171,6 +176,7 @@ export const TOOL_REGISTRY: Record<ToolId, ToolDefinition> = {
         plan: "api",
       },
     ],
+    website: "https://platform.openai.com/settings/billing",
   },
 
   gemini: {
@@ -193,6 +199,7 @@ export const TOOL_REGISTRY: Record<ToolId, ToolDefinition> = {
         plan: "individual",
       },
     ],
+    website: "https://one.google.com",
   },
 
   windsurf: {
@@ -220,6 +227,7 @@ export const TOOL_REGISTRY: Record<ToolId, ToolDefinition> = {
         plan: "team",
       },
     ],
+    website: "https://codeium.com/windsurf",
   },
 };
 

@@ -46,6 +46,7 @@ export type ToolDefinition = {
   vendor: string;
   category: ToolCategory;
   plans: PlanDefinition[];
+  website?: string;
 };
 
 // ── Audit Input ───────────────────────────────────────────────────────────────
