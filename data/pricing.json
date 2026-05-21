@@ -1,0 +1,168 @@
+{
+  "tools": [
+    {
+      "id": "chatgpt-plus",
+      "name": "ChatGPT Plus",
+      "vendor": "OpenAI",
+      "category": "chat",
+      "website": "https://chat.openai.com",
+      "tiers": [
+        {
+          "name": "Plus",
+          "monthlyPrice": 20,
+          "annualPrice": 200,
+          "includedSeats": 1,
+          "features": ["GPT-4o", "DALL·E 3", "Advanced Data Analysis"]
+        },
+        {
+          "name": "Team",
+          "monthlyPrice": 30,
+          "annualPrice": 300,
+          "minSeats": 2,
+          "features": ["GPT-4o", "Higher rate limits", "Admin console"]
+        },
+        {
+          "name": "Enterprise",
+          "monthlyPrice": null,
+          "annualPrice": null,
+          "features": ["Unlimited GPT-4", "Custom context window", "SSO/SAML"]
+        }
+      ]
+    },
+    {
+      "id": "claude-pro",
+      "name": "Claude Pro",
+      "vendor": "Anthropic",
+      "category": "chat",
+      "website": "https://claude.ai",
+      "tiers": [
+        {
+          "name": "Pro",
+          "monthlyPrice": 20,
+          "annualPrice": 200,
+          "includedSeats": 1,
+          "features": ["Claude Sonnet", "Priority access", "5x more usage"]
+        },
+        {
+          "name": "Team",
+          "monthlyPrice": 30,
+          "annualPrice": 300,
+          "minSeats": 5,
+          "features": ["Claude Sonnet", "Admin dashboard", "Centralized billing"]
+        }
+      ]
+    },
+    {
+      "id": "cursor",
+      "name": "Cursor",
+      "vendor": "Anysphere",
+      "category": "coding",
+      "website": "https://cursor.com",
+      "tiers": [
+        {
+          "name": "Hobby",
+          "monthlyPrice": 0,
+          "annualPrice": 0,
+          "features": ["2000 completions/month", "50 slow requests"]
+        },
+        {
+          "name": "Pro",
+          "monthlyPrice": 20,
+          "annualPrice": 192,
+          "features": ["Unlimited completions", "500 fast requests/month", "Claude & GPT-4"]
+        },
+        {
+          "name": "Business",
+          "monthlyPrice": 40,
+          "annualPrice": 384,
+          "features": ["All Pro features", "Admin dashboard", "SSO"]
+        }
+      ]
+    },
+    {
+      "id": "github-copilot",
+      "name": "GitHub Copilot",
+      "vendor": "GitHub / Microsoft",
+      "category": "coding",
+      "website": "https://github.com/features/copilot",
+      "tiers": [
+        {
+          "name": "Individual",
+          "monthlyPrice": 10,
+          "annualPrice": 100,
+          "features": ["Code completion", "Chat in IDE"]
+        },
+        {
+          "name": "Business",
+          "monthlyPrice": 19,
+          "annualPrice": 228,
+          "features": ["All Individual", "Policy management", "Audit logs"]
+        },
+        {
+          "name": "Enterprise",
+          "monthlyPrice": 39,
+          "annualPrice": 468,
+          "features": ["All Business", "Personalized models", "Security features"]
+        }
+      ]
+    },
+    {
+      "id": "gemini-advanced",
+      "name": "Gemini Advanced",
+      "vendor": "Google",
+      "category": "chat",
+      "website": "https://gemini.google.com",
+      "tiers": [
+        {
+          "name": "Google One AI Premium",
+          "monthlyPrice": 19.99,
+          "annualPrice": 239.88,
+          "includedSeats": 1,
+          "features": ["Gemini Ultra 1.0", "2TB storage", "Google Workspace integration"]
+        }
+      ]
+    },
+    {
+      "id": "openai-api",
+      "name": "OpenAI API",
+      "vendor": "OpenAI",
+      "category": "api",
+      "website": "https://platform.openai.com",
+      "tiers": [
+        {
+          "name": "Usage-based",
+          "monthlyPrice": null,
+          "pricing": {
+            "gpt-4o": { "input": 2.5, "output": 10, "unit": "per 1M tokens" },
+            "gpt-4o-mini": { "input": 0.15, "output": 0.6, "unit": "per 1M tokens" },
+            "gpt-4-turbo": { "input": 10, "output": 30, "unit": "per 1M tokens" }
+          }
+        }
+      ]
+    },
+    {
+      "id": "anthropic-api",
+      "name": "Anthropic API",
+      "vendor": "Anthropic",
+      "category": "api",
+      "website": "https://console.anthropic.com",
+      "tiers": [
+        {
+          "name": "Usage-based",
+          "monthlyPrice": null,
+          "pricing": {
+            "claude-3-5-sonnet": { "input": 3, "output": 15, "unit": "per 1M tokens" },
+            "claude-3-haiku": { "input": 0.25, "output": 1.25, "unit": "per 1M tokens" },
+            "claude-3-opus": { "input": 15, "output": 75, "unit": "per 1M tokens" }
+          }
+        }
+      ]
+    }
+  ],
+  "meta": {
+    "version": "1.0.0",
+    "lastUpdated": "2025-01-01",
+    "currency": "USD",
+    "note": "Prices are approximate and subject to change. Always verify with vendor."
+  }
+}

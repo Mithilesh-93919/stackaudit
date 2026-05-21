@@ -1,0 +1,5 @@
+/**
+ * @file components/ui/.gitkeep
+ * shadcn/ui components will be auto-generated here via:
+ * npx shadcn@latest add <component>
+ */

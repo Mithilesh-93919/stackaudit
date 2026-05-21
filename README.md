@@ -1,36 +1,116 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# StackAudit
 
-## Getting Started
+> **Audit your AI tool spend. Cut waste. Optimize your stack.**
 
-First, run the development server:
+StackAudit is a SaaS platform that helps startups audit their AI tool spending (ChatGPT, Claude, Cursor, Copilot, Gemini, and more) and recommends cost optimizations.
+
+[![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)](https://typescriptlang.org)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-4-38bdf8?logo=tailwindcss)](https://tailwindcss.com)
+[![Vercel](https://img.shields.io/badge/Deploy-Vercel-black?logo=vercel)](https://vercel.com)
+
+---
+
+## 🚀 Getting Started
 
 ```bash
+# Install dependencies
+npm install
+
+# Copy environment variables
+cp .env.example .env.local
+
+# Run development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🧱 Tech Stack
 
-## Learn More
+| Layer | Technology |
+|-------|-----------|
+| Framework | Next.js 15 (App Router) |
+| Language | TypeScript 5 (strict mode) |
+| Styling | Tailwind CSS v4 |
+| UI Components | shadcn/ui |
+| Database | Supabase (PostgreSQL) |
+| Auth | Supabase Auth |
+| AI | OpenAI / Anthropic |
+| Deployment | Vercel |
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 📁 Project Structure
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+stackaudit/
+├── app/                    # Next.js App Router
+│   ├── (marketing)/        # Landing, pricing, blog pages
+│   ├── (dashboard)/        # Authenticated app pages
+│   ├── api/                # API Route Handlers
+│   └── globals.css         # Global styles
+├── components/
+│   ├── ui/                 # shadcn/ui primitives
+│   ├── shared/             # Layout components (Navbar, Footer)
+│   ├── audit/              # Audit-specific components
+│   ├── forms/              # Form components
+│   └── charts/             # Data visualization
+├── lib/
+│   ├── audit-engine.ts     # Core audit logic
+│   ├── pricing.ts          # Pricing calculations
+│   ├── ai.ts               # AI provider integrations
+│   ├── utils.ts            # Shared utilities
+│   ├── validations.ts      # Zod schemas
+│   └── supabase.ts         # Database client
+├── data/
+│   └── pricing.json        # AI tool pricing data
+├── types/                  # TypeScript types
+├── hooks/                  # Custom React hooks
+├── tests/                  # Test suite
+└── public/                 # Static assets
+```
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🛠 Development Commands
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm run dev          # Start dev server
+npm run build        # Build for production
+npm run start        # Start production server
+npm run lint         # Run ESLint
+npm run lint:fix     # Fix lint errors
+npm run type-check   # TypeScript check
+npm run test         # Run tests
+npm run format       # Prettier format
+```
+
+---
+
+## 🌱 Environment Variables
+
+See `.env.example` for all required variables.
+
+---
+
+## 📖 Documentation
+
+| File | Purpose |
+|------|---------|
+| [ARCHITECTURE.md](./ARCHITECTURE.md) | System design decisions |
+| [DEVLOG.md](./DEVLOG.md) | Development changelog |
+| [TESTS.md](./TESTS.md) | Testing strategy |
+| [PRICING_DATA.md](./PRICING_DATA.md) | Pricing data sources |
+| [PROMPTS.md](./PROMPTS.md) | AI prompt library |
+| [GTM.md](./GTM.md) | Go-to-market strategy |
+| [ECONOMICS.md](./ECONOMICS.md) | Unit economics |
+| [METRICS.md](./METRICS.md) | KPIs & success metrics |
+
+---
+
+## 📄 License
+
+Private — All rights reserved.
