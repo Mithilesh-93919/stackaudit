@@ -4,6 +4,6 @@
  * Import from "@/types" for all shared types.
  */
 
-export * from "./audit";
-export * from "./tools";
-export * from "./user";
+export type * from "./audit";
+export type * from "./tools";
+export type * from "./user";
