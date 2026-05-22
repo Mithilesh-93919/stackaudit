@@ -51,16 +51,26 @@ export const metadata: Metadata = {
   },
 };
 
+import { ThemeProvider } from "@/components/providers/theme-provider";
+import { CurrencyProvider } from "@/components/providers/currency-provider";
+import { Toaster } from "@/components/ui/sonner";
+
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={cn("font-sans", geist.variable)}>
-      <body className="min-h-screen bg-background font-sans antialiased">
-        {children}
+    <html lang="en" className={cn("font-sans", geist.variable)} suppressHydrationWarning>
+      <body className="min-h-screen bg-background font-sans antialiased transition-colors duration-300">
+        <ThemeProvider>
+          <CurrencyProvider>
+            {children}
+            <Toaster richColors position="top-right" />
+          </CurrencyProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
 }
+

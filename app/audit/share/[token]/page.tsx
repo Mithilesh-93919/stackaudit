@@ -5,6 +5,7 @@ import type { AuditResult } from "@/lib/audit/types";
 import { AuditReport } from "@/components/audit/audit-report";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Navbar } from "@/components/shared/navbar";
 import { ShieldAlert, ArrowRight, Sparkles } from "lucide-react";
 import Link from "next/link";
 
@@ -12,7 +13,7 @@ interface PageProps {
   params: Promise<{ token: string }>;
 }
 
-// ── Dynamic SEO & Open Graph Metadata Generation ─────────────────────────────
+// ── Dynamic SEO & Open Graph Metadata Generation ──
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { token } = await params;
   
@@ -71,7 +72,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 }
 
-// ── Shared Audit Page Component ──────────────────────────────────────────────
+// ── Shared Audit Page Component ──
 export default async function SharePage({ params }: PageProps) {
   const { token } = await params;
   
@@ -96,36 +97,27 @@ export default async function SharePage({ params }: PageProps) {
   // 2. Render beautifully styled "Audit Not Found" empty state
   if (!dbAudit || fetchError) {
     return (
-      <div className="min-h-screen bg-slate-950 text-white font-sans flex flex-col justify-between">
+      <div className="min-h-screen bg-background text-foreground transition-colors duration-300 font-sans flex flex-col justify-between">
         {/* Navbar */}
-        <nav className="sticky top-0 z-50 border-b border-slate-900 bg-slate-950/80 backdrop-blur-md">
-          <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
-            <Link href="/" className="flex items-center gap-2 text-xl font-bold tracking-tight">
-              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-violet-600 text-sm font-black">
-                SA
-              </span>
-              <span>StackAudit</span>
-            </Link>
-          </div>
-        </nav>
+        <Navbar />
 
         {/* Content */}
         <main className="mx-auto max-w-md px-4 py-16 flex flex-col items-center justify-center grow">
-          <Card className="border-slate-800 bg-slate-900/60 p-8 w-full text-center space-y-6">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-400">
+          <Card className="border-border/40 bg-card p-8 w-full text-center space-y-6 shadow-sm">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 border border-destructive/20 text-destructive">
               <ShieldAlert className="h-7 w-7" />
             </div>
 
             <div className="space-y-2">
-              <h2 className="text-xl font-bold text-white">Report Not Found</h2>
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <h2 className="text-xl font-bold text-foreground">Report Not Found</h2>
+              <p className="text-xs text-muted-foreground leading-relaxed">
                 The shared audit link is invalid, has expired, or was removed for privacy reasons.
               </p>
             </div>
 
             <div className="pt-2">
               <Link href="/audit/new">
-                <Button className="w-full bg-violet-600 hover:bg-violet-500 text-xs font-semibold flex items-center justify-center gap-1.5">
+                <Button className="w-full bg-primary hover:bg-primary/95 text-xs font-semibold flex items-center justify-center gap-1.5 shadow-md shadow-primary/10">
                   <span>Run a New Audit</span>
                   <ArrowRight className="h-4 w-4" />
                 </Button>
@@ -135,7 +127,7 @@ export default async function SharePage({ params }: PageProps) {
         </main>
 
         {/* Footer */}
-        <footer className="border-t border-slate-900 py-6 bg-slate-950 text-center text-xs text-slate-500">
+        <footer className="border-t border-border/40 py-6 bg-muted/10 text-center text-xs text-muted-foreground">
           <span>© {new Date().getFullYear()} StackAudit. Security Guaranteed.</span>
         </footer>
       </div>
@@ -145,33 +137,21 @@ export default async function SharePage({ params }: PageProps) {
   const result = dbAudit.result_json as unknown as AuditResult;
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white font-sans flex flex-col justify-between">
+    <div className="min-h-screen bg-background text-foreground transition-colors duration-300 font-sans flex flex-col justify-between">
       {/* ── Navbar ── */}
-      <nav className="sticky top-0 z-50 border-b border-slate-900 bg-slate-950/80 backdrop-blur-md">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
-          <Link href="/" className="flex items-center gap-2 text-xl font-bold tracking-tight">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-violet-600 text-sm font-black">
-              SA
-            </span>
-            <span>StackAudit</span>
-          </Link>
-          <span className="rounded-full bg-slate-900 border border-slate-800 px-3 py-1 text-xs text-slate-400 font-medium">
-            Shared Spend Report
-          </span>
-        </div>
-      </nav>
+      <Navbar />
 
       {/* ── Main Dashboard ── */}
       <main className="mx-auto max-w-6xl py-8 grow w-full">
         {/* Banner notifying visitor they are looking at a shared audit */}
         <div className="mx-auto max-w-4xl px-4 mb-4">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 rounded-lg border border-violet-500/20 bg-violet-500/5 px-4 py-3 text-xs">
-            <div className="flex items-center gap-2 text-violet-300">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 rounded-lg border border-primary/20 bg-primary/5 px-4 py-3 text-xs">
+            <div className="flex items-center gap-2 text-primary">
               <Sparkles className="h-4 w-4 shrink-0 animate-pulse" />
-              <span>You are viewing a shared cost optimization report. Ready to optimize your own stack?</span>
+              <span className="font-medium">You are viewing a shared cost optimization report. Ready to optimize your own stack?</span>
             </div>
             <Link href="/audit/new" className="shrink-0">
-              <Button size="sm" className="h-8 bg-violet-600 hover:bg-violet-500 text-[11px] font-bold">
+              <Button size="sm" className="h-8 bg-primary text-primary-foreground hover:bg-primary/95 text-[11px] font-bold shadow-md shadow-primary/10">
                 Audit Your AI Stack Free
               </Button>
             </Link>
@@ -191,7 +171,7 @@ export default async function SharePage({ params }: PageProps) {
       </main>
 
       {/* ── Footer ── */}
-      <footer className="border-t border-slate-900 py-6 bg-slate-950 text-center text-xs text-slate-500">
+      <footer className="border-t border-border/40 py-6 bg-muted/10 text-center text-xs text-muted-foreground">
         <div className="mx-auto max-w-6xl px-4 flex flex-col sm:flex-row justify-between items-center gap-2">
           <span>© {new Date().getFullYear()} StackAudit. All rights reserved.</span>
           <span>Security Guaranteed — All data processed locally.</span>

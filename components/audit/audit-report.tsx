@@ -23,6 +23,7 @@ import {
 import { toast } from "sonner";
 
 import { LeadCapture } from "./lead-capture";
+import { useCurrency, FormattedAmount } from "@/components/providers/currency-provider";
 
 interface AuditReportProps {
   result: AuditResult;
@@ -32,6 +33,7 @@ interface AuditReportProps {
 
 export function AuditReport({ result, shareToken, onReset }: AuditReportProps) {
   const [copied, setCopied] = useState(false);
+  const { format } = useCurrency();
 
   const {
     teamSize,
@@ -51,10 +53,10 @@ export function AuditReport({ result, shareToken, onReset }: AuditReportProps) {
 Team Size: ${teamSize} members
 Tools Evaluated: ${subscriptionsEvaluated}
 Optimization Score: ${score}/100
-Current Monthly Spend: $${totalCurrentMonthlySpend.toFixed(2)}/mo
-Recommended Monthly Spend: $${totalRecommendedMonthlySpend.toFixed(2)}/mo
-Total Monthly Savings: $${totalMonthlySavings.toFixed(2)}/mo
-Annualized Savings Potential: $${totalAnnualSavings.toFixed(2)}/yr
+Current Monthly Spend: ${format(totalCurrentMonthlySpend)}/mo
+Recommended Monthly Spend: ${format(totalRecommendedMonthlySpend)}/mo
+Total Monthly Savings: ${format(totalMonthlySavings)}/mo
+Annualized Savings Potential: ${format(totalAnnualSavings)}/yr
 
 Summary:
 ${summary}
@@ -66,6 +68,7 @@ Generated via StackAudit.`;
     toast.success("Audit report summary copied to clipboard!");
     setTimeout(() => setCopied(false), 2000);
   };
+
 
   // Determine score colors
   const getScoreColor = (s: number) => {
@@ -188,27 +191,27 @@ Generated via StackAudit.`;
                   Optimization Results
                 </span>
                 <h1 className="text-3xl font-black text-white mt-1.5 flex items-center gap-2">
-                  Save <span className="text-green-400">${totalMonthlySavings.toFixed(0)}</span> / month
+                  Save <span className="text-green-400"><FormattedAmount value={totalMonthlySavings} precision={0} /></span> / month
                 </h1>
               </div>
 
               <div className="text-left md:text-right">
                 <div className="text-xs text-slate-500 font-medium">Annualized Savings Potential</div>
                 <div className="text-2xl font-black text-green-400 tracking-tight">
-                  ${totalAnnualSavings.toFixed(2)}
+                  <FormattedAmount value={totalAnnualSavings} />
                 </div>
               </div>
             </div>
 
-            <p className="text-xs leading-relaxed text-slate-400 bg-slate-950/40 border border-slate-805 rounded-lg p-3">
+            <p className="text-xs leading-relaxed text-slate-400 bg-slate-950/40 border border-slate-850 rounded-lg p-3">
               {summary}
             </p>
 
             {/* Spend visual progress bar */}
             <div className="space-y-1">
               <div className="flex justify-between text-xs font-semibold">
-                <span className="text-slate-500">Current Cost: ${totalCurrentMonthlySpend.toFixed(2)}/mo</span>
-                <span className="text-violet-400">Optimized Cost: ${totalRecommendedMonthlySpend.toFixed(2)}/mo</span>
+                <span className="text-slate-500">Current Cost: <FormattedAmount value={totalCurrentMonthlySpend} />/mo</span>
+                <span className="text-violet-400">Optimized Cost: <FormattedAmount value={totalRecommendedMonthlySpend} />/mo</span>
               </div>
               <Progress
                 value={(totalRecommendedMonthlySpend / totalCurrentMonthlySpend) * 100}

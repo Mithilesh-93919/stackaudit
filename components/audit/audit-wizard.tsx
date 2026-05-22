@@ -32,6 +32,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { toast } from "sonner";
+import { FormattedAmount } from "@/components/providers/currency-provider";
 
 // ── Types ──
 interface WizardSubscription {
@@ -467,7 +468,7 @@ export function AuditWizard({ onComplete }: AuditWizardProps) {
               </div>
               <div className="hidden text-right sm:block">
                 <div className="text-xs text-slate-500">Current Total spend</div>
-                <div className="text-lg font-bold text-violet-400">${totalDraftSpend.toFixed(2)}/mo</div>
+                <div className="text-lg font-bold text-violet-400"><FormattedAmount value={totalDraftSpend} />/mo</div>
               </div>
             </div>
           </Card>
@@ -521,7 +522,7 @@ export function AuditWizard({ onComplete }: AuditWizardProps) {
                         <SelectContent className="border-slate-800 bg-slate-900 text-white text-xs">
                           {tool.plans.map((p) => (
                             <SelectItem key={p.id} value={p.id}>
-                              {p.name} (${p.monthlyPricePerSeat}
+                              {p.name} (<FormattedAmount value={p.monthlyPricePerSeat} />
                               {p.flatFee ? " flat" : "/seat"})
                             </SelectItem>
                           ))}
@@ -663,9 +664,9 @@ export function AuditWizard({ onComplete }: AuditWizardProps) {
               </h3>
               <div className="flex flex-col items-center justify-center py-2 text-center">
                 <div className="text-[10px] uppercase tracking-wider text-slate-500">Declared monthly AI spend</div>
-                <div className="text-3xl font-black text-violet-400 mt-1">${totalDraftSpend.toFixed(2)}</div>
+                <div className="text-3xl font-black text-violet-400 mt-1"><FormattedAmount value={totalDraftSpend} /></div>
                 <div className="text-[10px] text-slate-400 mt-1">
-                  ${(totalDraftSpend * 12).toFixed(2)} annualized
+                  <FormattedAmount value={totalDraftSpend * 12} /> annualized
                 </div>
               </div>
             </div>
@@ -692,7 +693,7 @@ export function AuditWizard({ onComplete }: AuditWizardProps) {
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="font-bold text-slate-300">${sub.monthlySpend}/mo</div>
+                      <div className="font-bold text-slate-300"><FormattedAmount value={sub.monthlySpend} />/mo</div>
                       {sub.activeSeats < sub.seats && (
                         <div className="text-[10px] text-amber-400 font-semibold">
                           {sub.seats - sub.activeSeats} idle seat{sub.seats - sub.activeSeats > 1 ? "s" : ""}

@@ -23,6 +23,8 @@ interface FindingCardProps {
   recommendation: Recommendation;
 }
 
+import { FormattedAmount } from "@/components/providers/currency-provider";
+
 export function FindingCard({ recommendation }: FindingCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [completedSteps, setCompletedSteps] = useState<Record<number, boolean>>({});
@@ -112,8 +114,8 @@ export function FindingCard({ recommendation }: FindingCardProps) {
         <div className="flex items-center justify-between gap-4 border-t border-slate-800/60 pt-3 sm:border-t-0 sm:pt-0 shrink-0">
           <div className="text-left sm:text-right">
             <div className="text-[10px] uppercase tracking-wider text-slate-500">Monthly savings</div>
-            <div className="text-xl font-black text-green-400">${monthlySavings.toFixed(2)}</div>
-            <div className="text-[10px] text-slate-400">${annualSavings.toFixed(2)} / year</div>
+            <div className="text-xl font-black text-green-400"><FormattedAmount value={monthlySavings} /></div>
+            <div className="text-[10px] text-slate-400"><FormattedAmount value={annualSavings} /> / year</div>
           </div>
 
           <Button
@@ -139,7 +141,7 @@ export function FindingCard({ recommendation }: FindingCardProps) {
               </span>
               <div className="mt-1 font-bold text-slate-300">{currentPlan}</div>
               <div className="mt-1 text-sm text-slate-400">
-                Cost: <span className="font-semibold text-slate-200">${currentMonthlyCost.toFixed(2)}/mo</span>
+                Cost: <span className="font-semibold text-slate-200"><FormattedAmount value={currentMonthlyCost} />/mo</span>
               </div>
             </div>
 
@@ -150,7 +152,7 @@ export function FindingCard({ recommendation }: FindingCardProps) {
               </span>
               <div className="mt-1 font-bold text-white">{recommendedPlan}</div>
               <div className="mt-1 text-sm text-slate-300">
-                Cost: <span className="font-semibold text-white">${recommendedMonthlyCost.toFixed(2)}/mo</span>
+                Cost: <span className="font-semibold text-white"><FormattedAmount value={recommendedMonthlyCost} />/mo</span>
               </div>
             </div>
           </div>

@@ -1,4 +1,9 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import { Navbar } from "@/components/shared/navbar";
+import { FormattedAmount } from "@/components/providers/currency-provider";
+import { Button } from "@/components/ui/button";
+import { ArrowRight, Sparkles } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "StackAudit — AI Spend Audit for Startups",
@@ -18,9 +23,9 @@ const TOOLS = [
 ];
 
 const STATS = [
-  { value: "$1,840", label: "Avg monthly waste found" },
-  { value: "3.2x", label: "Avg tool overlap per team" },
-  { value: "< 5 min", label: "Time to complete audit" },
+  { value: 1840, isCurrency: true, label: "Avg monthly waste found" },
+  { value: "3.2x", isCurrency: false, label: "Avg tool overlap per team" },
+  { value: "< 5 min", isCurrency: false, label: "Time to complete audit" },
 ];
 
 const FEATURES = [
@@ -46,109 +51,58 @@ const FEATURES = [
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-slate-950 text-white">
-      {/* ── Nav ─────────────────────────────────────────────────────────── */}
-      <nav
-        className="sticky top-0 z-50 border-b border-slate-800 bg-slate-950/80 backdrop-blur-md"
-        aria-label="Main navigation"
-      >
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
-          <a
-            href="/"
-            className="flex items-center gap-2 text-xl font-bold tracking-tight"
-            aria-label="StackAudit Home"
-          >
-            <span
-              className="flex h-8 w-8 items-center justify-center rounded-lg bg-violet-600 text-sm font-black"
-              aria-hidden="true"
-            >
-              SA
-            </span>
-            <span>StackAudit</span>
-          </a>
-
-          <div className="hidden items-center gap-6 text-sm text-slate-400 sm:flex">
-            <a
-              href="#features"
-              id="nav-features"
-              className="transition-colors hover:text-white focus-visible:text-white"
-            >
-              Features
-            </a>
-            <a
-              href="#pricing"
-              id="nav-pricing"
-              className="transition-colors hover:text-white focus-visible:text-white"
-            >
-              Pricing
-            </a>
-          </div>
-
-          <a
-            href="/audit/new"
-            id="nav-cta"
-            className="rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white transition-all hover:bg-violet-500 focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
-          >
-            Start Free Audit
-          </a>
-        </div>
-      </nav>
+    <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
+      {/* ── Nav ── */}
+      <Navbar />
 
       <main>
-        {/* ── Hero ────────────────────────────────────────────────────────── */}
+        {/* ── Hero ── */}
         <section
           className="relative overflow-hidden px-4 pb-24 pt-20 sm:px-6 sm:pt-28 lg:pt-36"
           aria-labelledby="hero-heading"
         >
-          {/* Background gradient */}
+          {/* Background gradient effects */}
           <div
             className="pointer-events-none absolute inset-0 overflow-hidden"
             aria-hidden="true"
           >
-            <div className="absolute left-1/2 top-0 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-violet-600/20 blur-3xl" />
-            <div className="absolute right-0 top-1/2 h-[400px] w-[400px] -translate-y-1/2 translate-x-1/2 rounded-full bg-indigo-600/15 blur-3xl" />
+            <div className="absolute left-1/2 top-0 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/10 blur-3xl dark:bg-primary/20" />
+            <div className="absolute right-0 top-1/2 h-[400px] w-[400px] -translate-y-1/2 translate-x-1/2 rounded-full bg-violet-500/5 blur-3xl dark:bg-violet-500/10" />
           </div>
 
           <div className="relative mx-auto max-w-4xl text-center">
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-violet-500/30 bg-violet-500/10 px-4 py-1.5 text-sm text-violet-300">
-              <span
-                className="h-1.5 w-1.5 rounded-full bg-violet-400"
-                aria-hidden="true"
-              />
-              Now in beta — free audits available
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-sm text-primary">
+              <Sparkles className="h-4 w-4 shrink-0 animate-pulse" />
+              <span>Now in beta — free audits available</span>
             </div>
 
             <h1
               id="hero-heading"
-              className="mb-6 text-4xl font-extrabold leading-tight tracking-tight text-white sm:text-5xl lg:text-6xl"
+              className="mb-6 text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl lg:text-6xl text-foreground font-heading"
             >
               Stop Paying for AI Tools
               <br />
-              <span className="bg-gradient-to-r from-violet-400 to-indigo-400 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-primary to-violet-500 bg-clip-text text-transparent">
                 Your Team Doesn&apos;t Use
               </span>
             </h1>
 
-            <p className="mx-auto mb-10 max-w-2xl text-lg leading-relaxed text-slate-400 sm:text-xl">
+            <p className="mx-auto mb-10 max-w-2xl text-lg leading-relaxed text-muted-foreground sm:text-xl">
               StackAudit analyzes your AI tool spend across ChatGPT, Claude,
               Cursor, Copilot, and more — then tells you exactly where
               you&apos;re wasting money.
             </p>
 
             <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-              <a
-                href="/audit/new"
-                id="hero-cta-primary"
-                className="w-full rounded-xl bg-violet-600 px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-violet-900/40 transition-all hover:bg-violet-500 hover:shadow-violet-900/60 focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 sm:w-auto"
-              >
-                Audit My Stack — Free
-              </a>
-              <a
-                href="#features"
-                id="hero-cta-secondary"
-                className="w-full rounded-xl border border-slate-700 px-8 py-3.5 text-base font-semibold text-slate-300 transition-all hover:border-slate-600 hover:text-white focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 sm:w-auto"
-              >
-                See How It Works
+              <Link href="/audit/new" className="w-full sm:w-auto">
+                <Button className="w-full sm:w-auto h-12 px-8 text-base font-bold bg-primary text-primary-foreground hover:bg-primary/95 transition-all shadow-lg shadow-primary/20 hover:shadow-primary/30 hover:scale-[1.02] active:scale-95">
+                  Audit My Stack — Free
+                </Button>
+              </Link>
+              <a href="#features" className="w-full sm:w-auto">
+                <Button variant="outline" className="w-full sm:w-auto h-12 px-8 text-base font-bold border-border/80 bg-background/50 hover:bg-accent/40 text-muted-foreground hover:text-foreground">
+                  See How It Works
+                </Button>
               </a>
             </div>
 
@@ -160,36 +114,40 @@ export default function HomePage() {
               {TOOLS.map((tool) => (
                 <span
                   key={tool}
-                  className="rounded-full border border-slate-700 bg-slate-800/60 px-3 py-1 text-xs text-slate-400"
+                  className="rounded-full border border-border/40 bg-card px-3.5 py-1 text-xs font-semibold text-muted-foreground shadow-sm"
                 >
                   {tool}
                 </span>
               ))}
-              <span className="rounded-full border border-slate-700 bg-slate-800/60 px-3 py-1 text-xs text-slate-400">
+              <span className="rounded-full border border-border/40 bg-card px-3.5 py-1 text-xs font-semibold text-muted-foreground shadow-sm">
                 +30 more
               </span>
             </div>
           </div>
         </section>
 
-        {/* ── Stats ───────────────────────────────────────────────────────── */}
+        {/* ── Stats ── */}
         <section
-          className="border-y border-slate-800 bg-slate-900/50 px-4 py-12 sm:px-6"
+          className="border-y border-border/40 bg-muted/20 px-4 py-12 sm:px-6"
           aria-label="Key statistics"
         >
           <dl className="mx-auto grid max-w-4xl grid-cols-1 gap-8 sm:grid-cols-3">
             {STATS.map((stat) => (
               <div key={stat.label} className="text-center">
-                <dt className="mb-1 text-sm text-slate-500">{stat.label}</dt>
-                <dd className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
-                  {stat.value}
+                <dt className="mb-1 text-sm font-medium text-muted-foreground">{stat.label}</dt>
+                <dd className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
+                  {stat.isCurrency ? (
+                    <FormattedAmount value={Number(stat.value)} precision={0} />
+                  ) : (
+                    stat.value
+                  )}
                 </dd>
               </div>
             ))}
           </dl>
         </section>
 
-        {/* ── Features ────────────────────────────────────────────────────── */}
+        {/* ── Features ── */}
         <section
           id="features"
           className="px-4 py-20 sm:px-6 sm:py-28"
@@ -199,12 +157,12 @@ export default function HomePage() {
             <div className="mb-14 text-center">
               <h2
                 id="features-heading"
-                className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl"
+                className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl text-foreground font-heading"
               >
                 Everything you need to
-                <span className="text-violet-400"> control AI spend</span>
+                <span className="text-primary"> control AI spend</span>
               </h2>
-              <p className="mx-auto max-w-xl text-slate-400">
+              <p className="mx-auto max-w-xl text-muted-foreground text-sm">
                 Built for CTOs, founders, and finance teams who need visibility
                 into AI tool costs — without the enterprise price tag.
               </p>
@@ -214,19 +172,19 @@ export default function HomePage() {
               {FEATURES.map((feature) => (
                 <article
                   key={feature.title}
-                  className="group rounded-2xl border border-slate-800 bg-slate-900/60 p-6 transition-all hover:border-violet-500/40 hover:bg-slate-900"
+                  className="group rounded-2xl border border-border/40 bg-card p-6 shadow-sm transition-all hover:border-primary/40 hover:bg-accent/10"
                 >
                   <div
-                    className="mb-4 text-3xl"
+                    className="mb-4 text-3xl transition-transform duration-300 group-hover:scale-110"
                     role="img"
                     aria-label={feature.title}
                   >
                     {feature.icon}
                   </div>
-                  <h3 className="mb-2 text-lg font-semibold text-white">
+                  <h3 className="mb-2 text-lg font-bold text-foreground font-heading">
                     {feature.title}
                   </h3>
-                  <p className="text-sm leading-relaxed text-slate-400">
+                  <p className="text-sm leading-relaxed text-muted-foreground">
                     {feature.description}
                   </p>
                 </article>
@@ -235,58 +193,54 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* ── CTA Banner ──────────────────────────────────────────────────── */}
+        {/* ── CTA Banner ── */}
         <section
           className="px-4 py-20 sm:px-6"
           aria-labelledby="cta-heading"
         >
-          <div className="mx-auto max-w-3xl rounded-2xl border border-violet-500/30 bg-gradient-to-br from-violet-950/60 to-indigo-950/60 p-10 text-center">
+          <div className="mx-auto max-w-3xl rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/5 to-violet-500/5 dark:from-primary/10 dark:to-violet-500/10 p-10 text-center shadow-md">
             <h2
               id="cta-heading"
-              className="mb-4 text-2xl font-bold sm:text-3xl"
+              className="mb-4 text-2xl font-bold sm:text-3xl text-foreground font-heading"
             >
               Ready to find your AI waste?
             </h2>
-            <p className="mb-8 text-slate-400">
+            <p className="mb-8 text-muted-foreground text-sm">
               Takes 5 minutes. No credit card. No account required.
             </p>
-            <a
-              href="/audit/new"
-              id="footer-cta"
-              className="inline-flex items-center gap-2 rounded-xl bg-violet-600 px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-violet-900/40 transition-all hover:bg-violet-500 focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
-            >
-              Start Free Audit
-              <span aria-hidden="true">→</span>
-            </a>
+            <Link href="/audit/new">
+              <Button size="lg" className="h-12 px-8 font-bold bg-primary text-primary-foreground hover:bg-primary/95 shadow-md shadow-primary/10 hover:shadow-primary/20 hover:scale-[1.02] active:scale-95 flex items-center gap-1.5 mx-auto">
+                <span>Start Free Audit</span>
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
           </div>
         </section>
       </main>
 
-      {/* ── Footer ──────────────────────────────────────────────────────────── */}
+      {/* ── Footer ── */}
       <footer
-        className="border-t border-slate-800 px-4 py-10 sm:px-6"
+        className="border-t border-border/40 px-4 py-10 sm:px-6 bg-muted/10 text-muted-foreground"
         role="contentinfo"
       >
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 text-sm text-slate-500 sm:flex-row">
-          <span className="font-semibold text-slate-400">
+        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 text-sm sm:flex-row">
+          <span className="font-semibold text-foreground/80">
             StackAudit
           </span>
           <span>© {new Date().getFullYear()} StackAudit. All rights reserved.</span>
-          <nav aria-label="Footer navigation" className="flex gap-4">
-            <a
+          <nav aria-label="Footer navigation" className="flex gap-4 font-medium">
+            <Link
               href="/privacy"
-              id="footer-privacy"
-              className="transition-colors hover:text-white"
+              className="transition-colors hover:text-foreground"
             >
               Privacy
-            </a>
-            <a
+            </Link>
+            <Link
               href="/terms"
-              id="footer-terms"
-              className="transition-colors hover:text-white"
+              className="transition-colors hover:text-foreground"
             >
               Terms
-            </a>
+            </Link>
           </nav>
         </div>
       </footer>
