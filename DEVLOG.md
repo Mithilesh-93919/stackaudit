@@ -38,3 +38,5 @@
 **Plan for tomorrow:**
 - Integrate Supabase database logging to store historical report records.
 - Set up Supabase Auth user profiles to protect premium dashboard features.
+
+---

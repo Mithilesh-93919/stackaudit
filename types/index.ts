@@ -7,3 +7,4 @@
 export type * from "./audit";
 export type * from "./tools";
 export type * from "./user";
+export type * from "./database";

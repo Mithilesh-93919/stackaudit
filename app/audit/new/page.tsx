@@ -20,6 +20,7 @@ const LOADING_STEPS = [
 export default function AuditNewPage() {
   const [auditInput, setAuditInput] = useState<AuditInput | null>(null);
   const [auditResult, setAuditResult] = useState<AuditResult | null>(null);
+  const [shareToken, setShareToken] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [loadingStepIdx, setLoadingStepIdx] = useState(0);
   const [loadingProgress, setLoadingProgress] = useState(0);
@@ -63,24 +64,49 @@ export default function AuditNewPage() {
     setLoadingProgress(0);
     setLoadingStepIdx(0);
 
-    // Run audit logic immediately
     try {
-      const result = await runAudit(input);
+      // 1. Post to secure backend database API
+      const response = await fetch("/api/audit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(input),
+      });
 
-      // Force a slight aesthetic delay so the user experiences the audit animation
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || "Backend query failed.");
+      }
+
+      const data = await response.json();
+
+      // Force a slight delay so the user experiences the diagnostic loader animation
       setTimeout(() => {
-        setAuditResult(result);
+        setShareToken(data.shareToken || "");
+        setAuditResult(data.result);
         setIsLoading(false);
-      }, 3000);
+      }, 2500);
     } catch (e) {
-      console.error(e);
-      setIsLoading(false);
+      console.warn("Audit API persistence failed. Executing local fallback engine:", e);
+      
+      // 2. Resilient fallback: Run local client-side audit engine
+      try {
+        const localResult = await runAudit(input);
+        setTimeout(() => {
+          setShareToken(""); // empty token indicates fallback mode
+          setAuditResult(localResult);
+          setIsLoading(false);
+        }, 2500);
+      } catch (err) {
+        console.error("Local fallback failed:", err);
+        setIsLoading(false);
+      }
     }
   };
 
   const handleReset = () => {
     setAuditInput(null);
     setAuditResult(null);
+    setShareToken("");
     setIsLoading(false);
   };
 
@@ -153,7 +179,7 @@ export default function AuditNewPage() {
 
         {/* Results Screen */}
         {!isLoading && auditResult && (
-          <AuditReport result={auditResult} onReset={handleReset} />
+          <AuditReport result={auditResult} shareToken={shareToken} onReset={handleReset} />
         )}
       </main>
 

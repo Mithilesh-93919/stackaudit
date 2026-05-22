@@ -1,32 +1,59 @@
 /**
- * @module supabase
- * @description Supabase client configuration for StackAudit.
- * Provides typed database client for server-side and client-side usage.
+ * @module lib/supabase
+ * @description Typed Supabase clients for StackAudit.
  *
- * TODO: Install Supabase: npm install @supabase/supabase-js @supabase/ssr
- * TODO: Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in .env.local
- * TODO: Set SUPABASE_SERVICE_ROLE_KEY in .env.local (server-side only)
+ * Two clients:
+ *   - supabasePublic  — anon key, safe for client components (RLS enforced)
+ *   - supabaseAdmin   — service-role key, server-only, bypasses RLS
+ *
+ * Designed to dynamically evaluate env variables to prevent next build crashes.
  */
 
-// import { createClient } from "@supabase/supabase-js";
-// import { createServerClient } from "@supabase/ssr";
-// import type { Database } from "@/types/database";
+import { createClient } from "@supabase/supabase-js";
+import type { Database } from "@/types/database";
 
-// ── Client-side Supabase client ─────────────────────────────────────────────
+const getSupabaseUrl = () => process.env.NEXT_PUBLIC_SUPABASE_URL || "https://placeholder.supabase.co";
+const getSupabaseAnonKey = () => process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "placeholder-key";
+const getSupabaseServiceKey = () => process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-// export const supabase = createClient<Database>(
-//   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-//   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-// );
+// ── Public client (RLS-gated) ─────────────────────────────────────────────────
+// Lazily created wrapper to avoid module-load failures during static analysis
+let publicClientInstance: any = null;
 
-// ── Server-side Supabase client (for Route Handlers / Server Actions) ───────
+export const getSupabasePublic = (): any => {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    console.warn("Supabase public credentials missing. Returning fallback placeholder client.");
+  }
+  
+  if (!publicClientInstance) {
+    publicClientInstance = createClient<Database>(
+      getSupabaseUrl(),
+      getSupabaseAnonKey(),
+      { auth: { persistSession: false } }
+    ) as any;
+  }
+  return publicClientInstance;
+};
 
-// export function createSupabaseServerClient() {
-//   return createServerClient<Database>(
-//     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-//     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-//     { cookies: {} } // Wire up Next.js cookies() here
-//   );
-// }
+// For backward compatibility if imported as a constant
+export const supabasePublic = getSupabasePublic();
 
-export const SUPABASE_PLACEHOLDER = true;
+// ── Admin client (service-role — server only) ─────────────────────────────────
+export function getSupabaseAdmin(): any {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceKey = getSupabaseServiceKey();
+
+  if (!url || !serviceKey) {
+    // Only throw at query runtime when called, never on module load
+    console.warn("SUPABASE_SERVICE_ROLE_KEY or NEXT_PUBLIC_SUPABASE_URL is missing. DB operations will fail.");
+    return createClient<Database>(
+      getSupabaseUrl(),
+      getSupabaseAnonKey(),
+      { auth: { persistSession: false } }
+    ) as any;
+  }
+
+  return createClient<Database>(url, serviceKey, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  }) as any;
+}

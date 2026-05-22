@@ -22,12 +22,15 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
+import { LeadCapture } from "./lead-capture";
+
 interface AuditReportProps {
   result: AuditResult;
+  shareToken?: string;
   onReset: () => void;
 }
 
-export function AuditReport({ result, onReset }: AuditReportProps) {
+export function AuditReport({ result, shareToken, onReset }: AuditReportProps) {
   const [copied, setCopied] = useState(false);
 
   const {
@@ -236,6 +239,11 @@ Generated via StackAudit.`;
           ))}
         </div>
       </div>
+
+      {/* Lead Capture Form — Rendered dynamically if shareToken is present (i.e. not in offline fallback mode) */}
+      {shareToken && (
+        <LeadCapture shareToken={shareToken} totalAnnualSavings={totalAnnualSavings} />
+      )}
 
       {/* Footer Info Box */}
       <Card className="border-slate-800 bg-slate-900/20 p-5">

@@ -1,36 +1,81 @@
 /**
- * @module validations
- * @description Zod validation schemas for StackAudit.
- * Covers form validation, API request/response validation,
- * and data integrity checks.
+ * @module lib/validations
+ * @description Zod schemas for all StackAudit API request/response validation.
  *
- * TODO: Add Zod as dependency: npm install zod
+ * Schema map:
+ *   auditInputSchema      — POST /api/audit body
+ *   leadCaptureSchema     — POST /api/leads body
+ *   shareTokenSchema      — GET /api/audit/[token] param
  */
 
-// import { z } from "zod";
+import { z } from "zod";
 
-// ── Audit Form ──────────────────────────────────────────────────────────────
+// ── Re-usable primitives ──────────────────────────────────────────────────────
 
-// export const auditFormSchema = z.object({
-//   companyName: z.string().min(1, "Company name is required").max(100),
-//   teamSize: z.number().int().positive("Team size must be positive"),
-//   monthlyBudget: z.number().nonnegative().optional(),
-//   selectedTools: z.array(z.string()).min(1, "Select at least one tool"),
-//   email: z.string().email("Invalid email address"),
-// });
+const usageLevelSchema = z.enum(["low", "medium", "high", "unknown"]);
 
-// export type AuditFormValues = z.infer<typeof auditFormSchema>;
+const toolIdSchema = z.enum([
+  "cursor",
+  "github-copilot",
+  "claude",
+  "chatgpt",
+  "anthropic-api",
+  "openai-api",
+  "gemini",
+  "windsurf",
+]);
 
-// ── Onboarding ──────────────────────────────────────────────────────────────
+// ── Audit Input ───────────────────────────────────────────────────────────────
 
-// export const onboardingSchema = z.object({
-//   companyName: z.string().min(1),
-//   industry: z.enum(["startup", "smb", "enterprise", "agency", "freelance"]),
-//   teamSize: z.number().int().min(1).max(100000),
-// });
+const toolSubscriptionSchema = z.object({
+  toolId: toolIdSchema,
+  planId: z.string().min(1).max(50),
+  seats: z.number().int().min(1).max(10_000),
+  monthlySpend: z.number().min(0).max(1_000_000),
+  activeSeats: z.number().int().min(0).max(10_000).optional(),
+  monthlyInputTokens: z.number().min(0).optional(),
+  monthlyOutputTokens: z.number().min(0).optional(),
+  usageLevel: usageLevelSchema.optional(),
+});
 
-// export type OnboardingValues = z.infer<typeof onboardingSchema>;
+export const auditInputSchema = z.object({
+  teamSize: z.number().int().min(1).max(100_000),
+  subscriptions: z
+    .array(toolSubscriptionSchema)
+    .min(1, "At least one subscription is required")
+    .max(20, "Maximum 20 subscriptions per audit"),
+});
 
-// ── Placeholder export to prevent "empty module" TS error ──────────────────
+export type AuditInputPayload = z.infer<typeof auditInputSchema>;
 
-export const VALIDATIONS_PLACEHOLDER = true;
+// ── Lead Capture ──────────────────────────────────────────────────────────────
+
+export const leadCaptureSchema = z.object({
+  auditShareToken: z.string().min(1).max(50),
+  email: z
+    .string()
+    .email("Please enter a valid email address")
+    .max(254)
+    .toLowerCase()
+    .trim(),
+  companyName: z.string().max(100).trim().optional(),
+  role: z
+    .enum(["CTO", "Founder", "Engineering Manager", "Finance", "Other", ""])
+    .optional(),
+  teamSize: z.number().int().min(1).max(100_000).optional(),
+  consentedToMarketing: z.boolean().default(false),
+  // Honeypot — must be empty string (bots fill this in)
+  _hp: z.literal("").optional(),
+});
+
+export type LeadCapturePayload = z.infer<typeof leadCaptureSchema>;
+
+// ── Share token param ─────────────────────────────────────────────────────────
+
+export const shareTokenSchema = z.object({
+  token: z
+    .string()
+    .min(8)
+    .max(20)
+    .regex(/^[A-Za-z0-9_-]+$/, "Invalid share token format"),
+});
