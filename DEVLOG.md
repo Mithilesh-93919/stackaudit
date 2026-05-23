@@ -40,3 +40,30 @@
 - Set up Supabase Auth user profiles to protect premium dashboard features.
 
 ---
+
+## Day 3 — 2026-05-23
+
+**Hours worked:** 2
+
+**What I did:**
+- **CSS Variable Collision Fix (Critical Bug)**: Discovered and resolved a critical theming bug where two separate `:root` and `.dark` CSS variable blocks existed in `globals.css`. The second block (shadcn defaults using `oklch` color space) was overwriting the first block's carefully curated violet/purple primary palette with a plain grey scheme. Removed the conflicting block and consolidated sidebar variables using the correct HSL values — the UI now renders with the intended violet accent brand colors in both light and dark mode.
+- **Heading Hierarchy Fix (SEO)**: Fixed a semantic HTML violation in `audit-report.tsx` where an `<h1>` ("Save X/month") lived inside a component that was already rendered below a page-level `<h1>` ("Audit Your AI Stack"). Downgraded to `<h2>` to satisfy the single-`<h1>`-per-page rule for both SEO and accessibility.
+- **Invalid Tailwind Class Fix**: Removed three instances of `h-4.5` / `w-4.5` in `lead-capture.tsx` — these are not valid Tailwind utility classes (no decimal size token exists in the default scale). Replaced with `h-4 w-4`.
+- **SSR-Safe Browser API**: Wrapped the `confirm()` dialog in `audit-wizard.tsx` with a `typeof window !== "undefined"` guard to prevent a crash if the component ever renders in a server-side context.
+- **TypeScript Type Improvement**: Changed the `updateSubscription` helper's value parameter type from the unsafe `any` to `unknown` — eliminated the implicit escape hatch while remaining compatible with shadcn's `Select.onValueChange` signature which passes `string | null`.
+- **Pricing Section Added**: Added a proper `#pricing` anchor section to `app/page.tsx` (showcasing the free beta plan). The navbar had a "Pricing" link that previously scrolled to nothing — this now lands on a polished pricing card with feature list and CTA.
+- **Production TypeScript Verification**: Ran `tsc --noEmit` to confirm zero compiler errors across the entire codebase after all changes.
+
+**What I learned:**
+- CSS cascade order matters enormously — even well-organized files can have late-cascading blocks silently overwriting earlier ones. Always audit CSS variable declarations end-to-end before shipping.
+- TypeScript `unknown` is almost always the right choice over `any` for function parameter escape hatches — it forces callers to narrow the type themselves while still accepting any input.
+
+**Blockers / what I'm stuck on:**
+- None — all identified bugs resolved. Codebase is clean, type-safe, and production-ready.
+
+**Plan for tomorrow:**
+- Integrate Supabase database to persist audit reports with unique share tokens.
+- Set up Supabase Auth for user accounts and saved audit history dashboard.
+- Add social share card via `/audit/share/[token]` dynamic route.
+
+---

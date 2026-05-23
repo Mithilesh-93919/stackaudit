@@ -193,6 +193,60 @@ export default function HomePage() {
           </div>
         </section>
 
+        {/* ── Pricing ── */}
+        <section
+          id="pricing"
+          className="px-4 py-20 sm:px-6 sm:py-28 bg-muted/10 border-y border-border/30"
+          aria-labelledby="pricing-heading"
+        >
+          <div className="mx-auto max-w-4xl text-center">
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-sm text-primary">
+              <Sparkles className="h-4 w-4 shrink-0" />
+              <span>Beta Program</span>
+            </div>
+            <h2
+              id="pricing-heading"
+              className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl text-foreground font-heading"
+            >
+              Free while in{" "}
+              <span className="text-primary">beta</span>
+            </h2>
+            <p className="mx-auto mb-12 max-w-xl text-sm text-muted-foreground">
+              StackAudit is completely free during our beta period. Get unlimited audits, all optimization recommendations, and the full savings report at no cost.
+            </p>
+
+            <div className="mx-auto max-w-sm rounded-2xl border border-primary/30 bg-card p-8 shadow-lg shadow-primary/5 relative overflow-hidden">
+              <div className="pointer-events-none absolute -right-8 -top-8 h-32 w-32 rounded-full bg-primary/10 blur-2xl" aria-hidden="true" />
+              <div className="mb-3 inline-flex items-center rounded-full bg-primary/10 border border-primary/20 px-3 py-1 text-xs font-bold text-primary uppercase tracking-wider">
+                Free Beta Access
+              </div>
+              <div className="mb-1 text-5xl font-black text-foreground">$0</div>
+              <div className="mb-6 text-sm text-muted-foreground">per month, forever (during beta)</div>
+              <ul className="mb-8 space-y-3 text-sm text-left">
+                {[
+                  "Unlimited AI stack audits",
+                  "8+ AI tools supported",
+                  "Dollar-quantified savings report",
+                  "Seat utilization analysis",
+                  "Tool overlap detection",
+                  "Vendor alternative suggestions",
+                ].map((feature) => (
+                  <li key={feature} className="flex items-center gap-2 text-muted-foreground">
+                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary text-xs font-bold">✓</span>
+                    {feature}
+                  </li>
+                ))}
+              </ul>
+              <Link href="/audit/new" className="block">
+                <Button className="w-full h-11 font-bold bg-primary text-primary-foreground hover:bg-primary/95 shadow-md shadow-primary/10 hover:shadow-primary/20 hover:scale-[1.01] active:scale-95">
+                  Start Free Audit
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </section>
+
         {/* ── CTA Banner ── */}
         <section
           className="px-4 py-20 sm:px-6"
@@ -217,6 +271,7 @@ export default function HomePage() {
           </div>
         </section>
       </main>
+
 
       {/* ── Footer ── */}
       <footer

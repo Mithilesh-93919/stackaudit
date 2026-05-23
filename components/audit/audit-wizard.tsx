@@ -110,12 +110,14 @@ export function AuditWizard({ onComplete }: AuditWizardProps) {
   }, [formState, isMounted]);
 
   const resetForm = () => {
-    if (confirm("Are you sure you want to reset the wizard? All draft changes will be lost.")) {
-      setFormState(DEFAULT_STATE);
-      setStep(1);
-      localStorage.removeItem(LOCAL_STORAGE_KEY);
-      toast.success("Form reset successfully");
-    }
+    const confirmed = typeof window !== "undefined" && window.confirm(
+      "Are you sure you want to reset the wizard? All draft changes will be lost."
+    );
+    if (!confirmed) return;
+    setFormState(DEFAULT_STATE);
+    setStep(1);
+    localStorage.removeItem(LOCAL_STORAGE_KEY);
+    toast.success("Form reset successfully");
   };
 
   const handleNext = () => {
@@ -227,7 +229,7 @@ export function AuditWizard({ onComplete }: AuditWizardProps) {
     });
   };
 
-  const updateSubscription = (toolId: ToolId, field: keyof WizardSubscription, value: any) => {
+  const updateSubscription = (toolId: ToolId, field: keyof WizardSubscription, value: unknown) => {
     setFormState((prev) => {
       const sub = prev.subscriptions[toolId];
       if (!sub) return prev;

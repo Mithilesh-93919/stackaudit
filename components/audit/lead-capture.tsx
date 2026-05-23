@@ -132,7 +132,7 @@ export function LeadCapture({ shareToken, totalAnnualSavings }: LeadCaptureProps
               Work Email <span className="text-violet-400">*</span>
             </label>
             <div className="relative">
-              <Mail className="absolute left-3 top-2.5 h-4.5 w-4.5 text-slate-500" />
+              <Mail className="absolute left-3 top-2.5 h-4 w-4 text-slate-500" />
               <Input
                 type="email"
                 placeholder="you@company.com"
@@ -150,7 +150,7 @@ export function LeadCapture({ shareToken, totalAnnualSavings }: LeadCaptureProps
               Company Name
             </label>
             <div className="relative">
-              <Building2 className="absolute left-3 top-2.5 h-4.5 w-4.5 text-slate-500" />
+              <Building2 className="absolute left-3 top-2.5 h-4 w-4 text-slate-500" />
               <Input
                 type="text"
                 placeholder="Acme Corp"
@@ -167,7 +167,7 @@ export function LeadCapture({ shareToken, totalAnnualSavings }: LeadCaptureProps
               Your Role
             </label>
             <div className="relative">
-              <Briefcase className="absolute left-3 top-2.5 h-4.5 w-4.5 text-slate-500" />
+              <Briefcase className="absolute left-3 top-2.5 h-4 w-4 text-slate-500" />
               <select
                 value={role}
                 onChange={(e) => setRole(e.target.value)}

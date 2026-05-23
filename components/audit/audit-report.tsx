@@ -190,9 +190,9 @@ Generated via StackAudit.`;
                 <span className="rounded-full bg-green-500/10 border border-green-500/25 px-2.5 py-0.5 text-[10px] font-bold text-green-400 uppercase tracking-wider">
                   Optimization Results
                 </span>
-                <h1 className="text-3xl font-black text-white mt-1.5 flex items-center gap-2">
+                <h2 className="text-3xl font-black text-white mt-1.5 flex items-center gap-2">
                   Save <span className="text-green-400"><FormattedAmount value={totalMonthlySavings} precision={0} /></span> / month
-                </h1>
+                </h2>
               </div>
 
               <div className="text-left md:text-right">
