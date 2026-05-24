@@ -5,10 +5,15 @@
  * Entry point: runAudit(input) → AuditResult
  *
  * This engine is:
- * - Fully deterministic (no AI, no randomness in recommendations)
+ * - Fully deterministic (no randomness in recommendations or financials)
  * - Rules-based and financially defensible
  * - Modular (each rule is an isolated, testable function)
- * - Zero external dependencies (no API calls)
+ *
+ * The executive summary is generated via Anthropic claude-haiku-4-5
+ * when ANTHROPIC_API_KEY is present, with a deterministic template fallback.
+ * AI enrichment is opt-in — the engine works identically without a key.
+ *
+ * AI enrichment: lib/ai.ts → generateAuditSummary()
  */
 
 import type { AuditInput, AuditResult, RuleContext } from "./audit/types";
@@ -21,6 +26,8 @@ import {
   annualize,
 } from "./audit/helpers";
 import { runSubscriptionRules, runCrossRules } from "./audit/rules/index";
+import { TOOL_REGISTRY } from "./audit/pricing-data";
+import { generateAuditSummary } from "./ai";
 
 export type { AuditInput, AuditResult } from "./audit/types";
 export type { ToolSubscription, Recommendation, ToolId } from "./audit/types";
@@ -28,9 +35,17 @@ export type { ToolSubscription, Recommendation, ToolId } from "./audit/types";
 // ── Main Export ───────────────────────────────────────────────────────────────
 
 /**
- * Runs a complete deterministic audit on an organization's AI tool subscriptions.
+ * Runs a complete audit on an organization's AI tool subscriptions.
+ *
+ * Steps:
+ *  1. Validate input
+ *  2. Run all per-subscription rules (overpaying, seat waste, API alternatives, cross-vendor)
+ *  3. Run all cross-subscription rules (overlap detection)
+ *  4. Aggregate financials & compute score
+ *  5. Generate executive summary (AI-enhanced when ANTHROPIC_API_KEY is set)
  *
  * @param input - The subscriptions and team context to audit
+ * @param options.skipAiSummary - Force-skip AI enrichment (used by unit tests)
  * @returns A fully populated AuditResult with sorted recommendations
  *
  * @example
@@ -38,15 +53,19 @@ export type { ToolSubscription, Recommendation, ToolId } from "./audit/types";
  * const result = await runAudit({
  *   teamSize: 8,
  *   subscriptions: [
- *     { toolId: "cursor", planId: "pro", seats: 8, monthlySpend: 160 },
- *     { toolId: "github-copilot", planId: "business", seats: 8, monthlySpend: 152 },
- *     { toolId: "chatgpt", planId: "plus", seats: 1, monthlySpend: 20, usageLevel: "low" },
+ *     { toolId: "cursor",         planId: "pro",        seats: 8, monthlySpend: 160 },
+ *     { toolId: "github-copilot", planId: "business",   seats: 8, monthlySpend: 152 },
+ *     { toolId: "chatgpt",        planId: "plus",        seats: 1, monthlySpend: 20, usageLevel: "low" },
  *   ],
  * });
  * console.log(result.totalAnnualSavings); // → $1,944
+ * console.log(result.aiSummaryGenerated); // → true (if API key set), false otherwise
  * ```
  */
-export async function runAudit(input: AuditInput): Promise<AuditResult> {
+export async function runAudit(
+  input: AuditInput,
+  options: { skipAiSummary?: boolean } = {}
+): Promise<AuditResult> {
   validateInput(input);
 
   const auditId = generateAuditId();
@@ -58,7 +77,7 @@ export async function runAudit(input: AuditInput): Promise<AuditResult> {
     0
   );
 
-  const allRecommendations = [];
+  const allRecommendations: ReturnType<typeof runSubscriptionRules> = [];
 
   // ── Per-subscription rules ───────────────────────────────────────────────
   for (const subscription of input.subscriptions) {
@@ -66,7 +85,7 @@ export async function runAudit(input: AuditInput): Promise<AuditResult> {
     try {
       tool = getToolById(subscription.toolId);
     } catch {
-      // Skip unknown tools gracefully
+      // Skip unknown tools gracefully — don't crash the whole audit
       console.warn(`[audit-engine] Unknown toolId: "${subscription.toolId}" — skipping`);
       continue;
     }
@@ -96,10 +115,47 @@ export async function runAudit(input: AuditInput): Promise<AuditResult> {
   );
   const score = calculateScore(totalCurrentMonthlySpend, totalMonthlySavings);
 
-  // Sort recommendations by monthly savings descending (highest impact first)
+  // Sort by highest monthly savings first
   const sortedRecommendations = allRecommendations.sort(
     (a, b) => b.monthlySavings - a.monthlySavings
   );
+
+  // ── Summary (deterministic baseline — always computed first) ─────────────
+  const deterministicSummary = generateSummary(
+    sortedRecommendations,
+    totalCurrentMonthlySpend,
+    totalMonthlySavings
+  );
+
+  // ── AI-enhanced summary (non-blocking enrichment) ────────────────────────
+  // Resolves to fallback instantly if ANTHROPIC_API_KEY is absent or times out.
+  let summary = deterministicSummary;
+  let aiSummaryGenerated = false;
+
+  if (!options.skipAiSummary) {
+    const toolNames = input.subscriptions
+      .map((s) => TOOL_REGISTRY[s.toolId]?.name ?? s.toolId)
+      .filter(Boolean);
+
+    const aiResult = await generateAuditSummary({
+      teamSize: input.teamSize,
+      toolNames,
+      totalCurrentMonthlySpend: roundCents(totalCurrentMonthlySpend),
+      totalMonthlySavings,
+      totalAnnualSavings,
+      score,
+      recommendations: sortedRecommendations.map((r) => ({
+        title: r.title,
+        monthlySavings: r.monthlySavings,
+        severity: r.severity,
+        confidence: r.confidence,
+      })),
+      fallbackSummary: deterministicSummary,
+    });
+
+    summary = aiResult.summary;
+    aiSummaryGenerated = aiResult.aiGenerated;
+  }
 
   return {
     auditId,
@@ -112,7 +168,9 @@ export async function runAudit(input: AuditInput): Promise<AuditResult> {
     totalAnnualSavings,
     score,
     recommendations: sortedRecommendations,
-    summary: generateSummary(sortedRecommendations, totalCurrentMonthlySpend, totalMonthlySavings),
+    summary,
+    // Surface whether AI enhanced the summary — useful for UI badge and logging
+    aiSummaryGenerated,
   };
 }
 

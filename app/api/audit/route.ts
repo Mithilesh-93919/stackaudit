@@ -8,15 +8,23 @@ export const runtime = "nodejs";
 
 /**
  * POST /api/audit
- * Receives AI stack parameters, runs the deterministic audit engine,
- * persists the results in Supabase, and returns the share token.
+ *
+ * Flow:
+ *  1. Rate-limit check (15 audits/hr/IP)
+ *  2. Zod validation of request body
+ *  3. Deterministic audit engine + AI-enhanced summary (claude-haiku-4-5)
+ *  4. Persist full result to Supabase
+ *  5. Return AuditResult + share token to client
+ *
+ * The AI summary generation (step 3) is non-blocking and falls back to the
+ * deterministic template if ANTHROPIC_API_KEY is absent or times out.
  */
 export async function POST(request: NextRequest) {
   try {
-    // 1. Abuse Protection: Rate Limit Check (max 15 audits per hour per IP)
+    // ── 1. Abuse Protection: rate limit ────────────────────────────────────
     const ip = getClientIp(request.headers);
     const isAllowed = await checkRateLimit(ip, "audit", 15, 3600);
-    
+
     if (!isAllowed) {
       return NextResponse.json(
         { error: "Too many audit requests. Please try again in an hour." },
@@ -24,15 +32,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 2. Body parsing and schema validation
+    // ── 2. Parse + validate body ────────────────────────────────────────────
     const body = await request.json().catch(() => ({}));
     const validationResult = auditInputSchema.safeParse(body);
-    
+
     if (!validationResult.success) {
       return NextResponse.json(
-        { 
-          error: "Invalid input parameters", 
-          details: validationResult.error.flatten().fieldErrors 
+        {
+          error: "Invalid input parameters",
+          details: validationResult.error.flatten().fieldErrors,
         },
         { status: 400 }
       );
@@ -40,10 +48,18 @@ export async function POST(request: NextRequest) {
 
     const payload = validationResult.data;
 
-    // 3. Execute the core deterministic engine
+    // ── 3. Run deterministic engine + AI summary enrichment ─────────────────
+    // runAudit() always returns a valid result.
+    // If ANTHROPIC_API_KEY is missing or the call times out, the fallback
+    // deterministic summary is used transparently.
     const auditResult = await runAudit(payload);
 
-    // 4. Save to Supabase using admin client (bypasses RLS for secure insert)
+    console.info(
+      `[api/audit] Completed — score=${auditResult.score}, savings=$${auditResult.totalMonthlySavings}/mo, ` +
+        `aiSummary=${auditResult.aiSummaryGenerated ?? false}, tools=${payload.subscriptions.length}`
+    );
+
+    // ── 4. Persist to Supabase ──────────────────────────────────────────────
     const supabase = getSupabaseAdmin();
     const toolIds = payload.subscriptions.map((s) => s.toolId);
 
@@ -60,29 +76,33 @@ export async function POST(request: NextRequest) {
         total_annual_savings: auditResult.totalAnnualSavings,
         recommendations_count: auditResult.recommendations.length,
         summary: auditResult.summary,
-        result_json: auditResult as any, // Cast to any for JSONB compatibility
-        user_agent: request.headers.get("user-agent") || null,
+        // Persist the full AuditResult blob; the share page deserialises this
+        result_json: auditResult as unknown as Record<string, unknown>,
+        user_agent: request.headers.get("user-agent") ?? null,
       })
       .select("id, share_token")
       .single();
 
     if (dbError) {
-      console.error("Database persistence failure:", dbError);
+      console.error("[api/audit] Database persistence failure:", dbError);
       return NextResponse.json(
         { error: "Failed to persist audit results to the database." },
         { status: 500 }
       );
     }
 
-    // 5. Return full audit result along with its public share token
+    // ── 5. Return result ────────────────────────────────────────────────────
     return NextResponse.json({
       success: true,
       shareToken: dbAudit.share_token,
       auditId: dbAudit.id,
       result: auditResult,
+      // Surface to client whether the summary was AI-generated
+      aiSummaryGenerated: auditResult.aiSummaryGenerated ?? false,
     });
-  } catch (error: any) {
-    console.error("Audit API handler exception:", error);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.error("[api/audit] Handler exception:", message);
     return NextResponse.json(
       { error: "Internal server error during audit compilation." },
       { status: 500 }

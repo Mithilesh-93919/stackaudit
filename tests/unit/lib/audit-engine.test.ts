@@ -3,11 +3,19 @@
  * @description Unit tests for the StackAudit audit engine.
  *
  * Run: npm test
- * (Requires: npm install -D jest @types/jest ts-jest)
+ *
+ * All calls use { skipAiSummary: true } to keep tests hermetic —
+ * no ANTHROPIC_API_KEY is required in the test environment.
+ * AI summary behaviour is validated separately via integration tests.
  */
 
 import { runAudit } from "../../../lib/audit-engine";
 import type { AuditInput } from "../../../lib/audit-engine";
+
+// ── Test helper ───────────────────────────────────────────────────────────────
+
+/** Wrapper that always skips AI enrichment for deterministic, fast tests. */
+const audit = (input: AuditInput) => runAudit(input, { skipAiSummary: true });
 
 // ── Fixtures ──────────────────────────────────────────────────────────────────
 
@@ -76,19 +84,19 @@ describe("runAudit", () => {
   describe("input validation", () => {
     it("throws on missing subscriptions", async () => {
       await expect(
-        runAudit({ teamSize: 1, subscriptions: undefined as never })
+        audit({ teamSize: 1, subscriptions: undefined as never })
       ).rejects.toThrow();
     });
 
     it("throws on negative team size", async () => {
       await expect(
-        runAudit({ teamSize: -1, subscriptions: [] })
+        audit({ teamSize: -1, subscriptions: [] })
       ).rejects.toThrow();
     });
 
     it("throws on invalid monthlySpend", async () => {
       await expect(
-        runAudit({
+        audit({
           teamSize: 1,
           subscriptions: [{ toolId: "cursor", planId: "pro", seats: 1, monthlySpend: -10 }],
         })
@@ -98,7 +106,7 @@ describe("runAudit", () => {
 
   describe("result structure", () => {
     it("returns a valid AuditResult shape", async () => {
-      const result = await runAudit(fullyOptimized);
+      const result = await audit(fullyOptimized);
       expect(result).toHaveProperty("auditId");
       expect(result).toHaveProperty("generatedAt");
       expect(result).toHaveProperty("totalCurrentMonthlySpend");
@@ -109,40 +117,45 @@ describe("runAudit", () => {
       expect(result).toHaveProperty("summary");
     });
 
+    it("aiSummaryGenerated is false when skipAiSummary is true", async () => {
+      const result = await audit(fullyOptimized);
+      expect(result.aiSummaryGenerated).toBe(false);
+    });
+
     it("score is between 0 and 100", async () => {
-      const result = await runAudit(singleDevCursorAndCopilot);
+      const result = await audit(singleDevCursorAndCopilot);
       expect(result.score).toBeGreaterThanOrEqual(0);
       expect(result.score).toBeLessThanOrEqual(100);
     });
 
     it("annual savings = monthly savings × 12", async () => {
-      const result = await runAudit(singleDevCursorAndCopilot);
+      const result = await audit(singleDevCursorAndCopilot);
       expect(result.totalAnnualSavings).toBeCloseTo(result.totalMonthlySavings * 12, 1);
     });
 
     it("subscriptionsEvaluated matches input length", async () => {
-      const result = await runAudit(tripleChatOverlap);
+      const result = await audit(tripleChatOverlap);
       expect(result.subscriptionsEvaluated).toBe(3);
     });
   });
 
   describe("rule: single-seat-team-plan", () => {
     it("flags ChatGPT Team with 1 seat", async () => {
-      const result = await runAudit(chatgptTeamSingleSeat);
+      const result = await audit(chatgptTeamSingleSeat);
       const rec = result.recommendations.find((r) => r.ruleId === "single-seat-team-plan");
       expect(rec).toBeDefined();
       expect(rec?.monthlySavings).toBe(10); // $30 team → $20 plus
     });
 
     it("saves $10/month on ChatGPT team → plus downgrade", async () => {
-      const result = await runAudit(chatgptTeamSingleSeat);
+      const result = await audit(chatgptTeamSingleSeat);
       expect(result.totalMonthlySavings).toBeGreaterThanOrEqual(10);
     });
   });
 
   describe("rule: low-seat-utilization", () => {
     it("flags seats when utilization < 70%", async () => {
-      const result = await runAudit(excessSeats);
+      const result = await audit(excessSeats);
       const rec = result.recommendations.find((r) => r.ruleId === "low-seat-utilization");
       expect(rec).toBeDefined();
       expect(rec?.monthlySavings).toBeGreaterThan(0);
@@ -151,7 +164,7 @@ describe("runAudit", () => {
 
   describe("rule: claude-pro-to-api-low", () => {
     it("flags Claude Pro with low usage", async () => {
-      const result = await runAudit(lowUsageClaude);
+      const result = await audit(lowUsageClaude);
       const rec = result.recommendations.find((r) => r.ruleId === "claude-pro-to-api-low");
       expect(rec).toBeDefined();
       expect(rec?.confidence).toBe("medium");
@@ -160,7 +173,7 @@ describe("runAudit", () => {
 
   describe("rule: multiple-coding-tools", () => {
     it("flags two coding tools as overlap", async () => {
-      const result = await runAudit(singleDevCursorAndCopilot);
+      const result = await audit(singleDevCursorAndCopilot);
       const rec = result.recommendations.find((r) => r.ruleId === "multiple-coding-tools");
       expect(rec).toBeDefined();
       expect(rec?.severity).toBe("high");
@@ -169,7 +182,7 @@ describe("runAudit", () => {
 
   describe("rule: triple-chat-overlap", () => {
     it("flags three chat tools", async () => {
-      const result = await runAudit(tripleChatOverlap);
+      const result = await audit(tripleChatOverlap);
       const rec = result.recommendations.find((r) => r.ruleId === "triple-chat-overlap");
       expect(rec).toBeDefined();
       expect(rec?.affectedToolIds).toContain("chatgpt");
@@ -178,7 +191,7 @@ describe("runAudit", () => {
     });
 
     it("correctly calculates savings as most expensive tool cost", async () => {
-      const result = await runAudit(tripleChatOverlap);
+      const result = await audit(tripleChatOverlap);
       const rec = result.recommendations.find((r) => r.ruleId === "triple-chat-overlap");
       // Most expensive of the three is $20 (chatgpt or claude)
       expect(rec?.monthlySavings).toBe(20);
@@ -187,20 +200,20 @@ describe("runAudit", () => {
 
   describe("optimized input", () => {
     it("returns score of 100 when no savings found", async () => {
-      const result = await runAudit(fullyOptimized);
+      const result = await audit(fullyOptimized);
       expect(result.score).toBe(100);
       expect(result.recommendations).toHaveLength(0);
     });
 
     it("summary mentions no savings for optimized input", async () => {
-      const result = await runAudit(fullyOptimized);
+      const result = await audit(fullyOptimized);
       expect(result.summary).toMatch(/optimized|no significant/i);
     });
   });
 
   describe("recommendations ordering", () => {
     it("sorts recommendations by monthlySavings descending", async () => {
-      const result = await runAudit(tripleChatOverlap);
+      const result = await audit(tripleChatOverlap);
       for (let i = 1; i < result.recommendations.length; i++) {
         expect(result.recommendations[i - 1]!.monthlySavings).toBeGreaterThanOrEqual(
           result.recommendations[i]!.monthlySavings
