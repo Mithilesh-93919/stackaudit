@@ -67,3 +67,59 @@
 - Add social share card via `/audit/share/[token]` dynamic route.
 
 ---
+
+## Day 4 — 2026-05-24
+
+**Hours worked:** 3
+
+**What I did:**
+- Continued building the audit flow UI and connected it with the deterministic audit engine
+- Improved the multi-step onboarding experience and added localStorage persistence so users do not lose progress after refreshing
+- Built the audit results dashboard with savings breakdowns, optimization recommendations, and confidence indicators
+- Added polished loading states and transitions to improve the overall SaaS product feel
+- Refactored several UI components into reusable modules to keep the codebase maintainable
+
+**What I learned:**
+- Learned how important UX flow and visual hierarchy are in making analytical products feel trustworthy and easy to use
+- Improved my understanding of component composition and state management patterns in Next.js App Router projects
+
+**Blockers / what I'm stuck on:**
+- Needed to think carefully about how to present optimization recommendations clearly without overwhelming the user
+- Still planning the best approach for backend persistence and public shareable reports
+
+**Plan for tomorrow:**
+- Implement backend persistence layer using Supabase
+- Add lead capture flows and shareable audit report architecture
+- Begin production hardening and API route validation
+
+---
+
+## Day 5 — 2026-05-25
+
+**Hours worked:** 3.5
+
+**What I did:**
+- Implemented Supabase persistence for audit reports and lead capture flows
+- Added secure API route validation using Zod schemas and improved backend type safety
+- Built public shareable report routes with privacy-safe rendering and Open Graph metadata support
+- Integrated transactional email handling and lightweight abuse protection mechanisms
+- Replaced the placeholder AI summary system with a real Anthropic-powered summary generation layer and deterministic fallback handling
+- Added GitHub Actions CI workflow for automated linting, type checks, and test execution
+- Created Privacy Policy and Terms of Service pages and cleaned up several production-readiness issues identified during architecture review
+
+**What I learned:**
+- Learned how to structure production-safe backend systems that fail gracefully when third-party APIs are unavailable
+- Improved my understanding of CI pipelines, metadata handling, and deployment-oriented application design
+
+**Blockers / what I'm stuck on:**
+- Need to complete deployment testing and optimize Lighthouse performance before final submission
+- Need to create final Open Graph image assets for social sharing previews
+
+**Plan for tomorrow:**
+- Deploy the application to Vercel
+- Configure production environment variables
+- Run Lighthouse audits and optimize performance
+- Capture final screenshots and demo video
+- Perform final QA and submission review
+
+---
