@@ -71,27 +71,18 @@ Start a free audit at [/audit/new](https://stackaudit-fawn.vercel.app/audit/new)
 
 ## Demo Video
 
-> **Loom title:** `StackAudit — AI Spend Audit SaaS Demo (2 min)`  
-> **Loom description:** `A walkthrough of StackAudit, a deterministic AI spend audit tool built in 5 days. See the 4-step wizard, AI-powered savings report, shareable report links, and dark/light mode.`
+**[Watch the full walkthrough on Google Drive](https://drive.google.com/file/d/1hmVFdrxWSJXvdMUb0ATRZQGT8iw1aZDd/view?usp=sharing)**
 
-### Recording Script (target: 2–3 minutes)
+A 2–3 minute walkthrough demonstrating:
 
-| Timestamp | Action | Talking Point |
-|-----------|--------|---------------|
-| 0:00–0:20 | Open live URL, show landing page | "StackAudit audits your AI tool spend — no login required." |
-| 0:20–0:35 | Click "Audit My Stack — Free" | Show the transition into the wizard |
-| 0:35–0:50 | Step 1: set team size to 10 | "We use team size to detect seat overprovisioning" |
-| 0:50–1:10 | Step 2: select ChatGPT, Claude, Cursor, GitHub Copilot | Point out the tool grid and check states |
-| 1:10–1:30 | Step 3: keep defaults, show idle seats warning | "The engine checks declared active seats vs. purchased seats" |
-| 1:30–1:40 | Step 4: show review screen with total spend | "$340/month declared" |
-| 1:40–1:55 | Click Run Audit — let loader play | "The loading animation covers real API processing" |
-| 1:55–2:15 | Show results dashboard | "Score 21/100, $270/month savings identified — 79% reduction" |
-| 2:15–2:30 | Expand Cursor + Copilot finding card | Show the action checklist inside the card |
-| 2:30–2:45 | Click Share Audit Card | "Public shareable link — send directly to your CFO" |
-| 2:45–2:55 | Toggle dark/light mode | Point out the theme persistence |
-| 2:55–3:00 | Resize to mobile in DevTools | Show the responsive layout |
+- **Audit flow** — 4-step wizard from team size to plan review
+- **Optimization engine** — 9 deterministic rules producing dollar-quantified findings
+- **AI summaries** — Claude Haiku executive summary with graceful fallback
+- **Shareable reports** — public `/audit/share/[token]` URL, no login required
+- **Responsive UI** — dark/light mode and mobile layout
+- **Production deployment** — live on Vercel with Supabase persistence
 
-**Recommended tools:** Loom (easiest), OBS Studio, or QuickTime (macOS Screen Recording)
+See [DEMO_VIDEO.md](./DEMO_VIDEO.md) for the full recording script and walkthrough notes.
 
 ---
 
@@ -465,7 +456,8 @@ Given more time, these are the highest-priority improvements:
 - [x] Rate limiting active on `/api/audit`
 - [x] Privacy Policy and Terms pages live
 - [x] Screenshots captured and committed to `public/screenshots/`
-- [x] README updated with embedded screenshots and demo video script
+- [x] Demo video recorded and published
+- [x] README updated with embedded screenshots and demo video link
 - [x] DEMO_VIDEO.md recording guide complete
 - [x] All markdown documentation complete and consistent
 

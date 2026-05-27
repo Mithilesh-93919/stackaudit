@@ -1,6 +1,8 @@
 # DEMO VIDEO — StackAudit
 
-A concise guide for recording and publishing the StackAudit product demo.
+**Published demo:** [Watch on Google Drive](https://drive.google.com/file/d/1hmVFdrxWSJXvdMUb0ATRZQGT8iw1aZDd/view?usp=sharing)
+
+A walkthrough of the full StackAudit product — audit flow, optimization engine, AI summaries, shareable reports, and responsive UI. Below is the full recording script used to produce the video.
 
 ---
 
@@ -149,12 +151,12 @@ A concise guide for recording and publishing the StackAudit product demo.
 
 ---
 
-## Post-Recording
+## Post-Recording Notes
 
 1. Trim any dead time at the start/end
-2. Add captions if using Loom's built-in captioning
-3. Set Loom visibility to "Anyone with link" before sharing
-4. Add the Loom link to README.md under the Demo Video section
+2. Add captions for accessibility
+3. Ensure visibility is set to "Anyone with link"
+4. Demo link is published in README.md under the Demo Video section
 
 ---
 

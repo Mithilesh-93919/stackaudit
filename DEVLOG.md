@@ -1,3 +1,30 @@
+# DEVLOG — StackAudit
+
+A day-by-day record of decisions, progress, and lessons learned during the StackAudit build.
+
+---
+
+## Day 7 — 2026-05-27 (Submission)
+
+**Hours worked:** 1
+
+**What I did:**
+
+- **Final Demo Video Publication**: Recorded and published the full product walkthrough to Google Drive. Integrated the link into `README.md` and `DEMO_VIDEO.md` — replacing the recording-guide placeholder with the actual published link.
+- **Documentation Consistency Pass**: Reviewed all markdown files (`README.md`, `DEMO_VIDEO.md`, `ARCHITECTURE.md`, `REFLECTION.md`, `DEVLOG.md`) end-to-end. No placeholder text, broken references, or TODO sections remain.
+- **Submission Checklist Finalized**: Updated the README submission checklist to reflect the demo video is published and the documentation pass is complete.
+- **Final Commit & Push**: Staged all changes and pushed the final `chore: finalize StackAudit submission` commit to `main`.
+
+**What I learned:**
+
+- The gap between "done" and "submission-ready" is documentation, not code. The last hour of a project is reading your own README like a recruiter would.
+
+**Blockers / what I'm stuck on:**
+
+- None. All deliverables complete.
+
+---
+
 ## Day 1 — 2026-05-21
 
 **Hours worked:** 3
