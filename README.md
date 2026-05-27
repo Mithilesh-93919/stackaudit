@@ -9,6 +9,7 @@ StackAudit helps startup teams audit what they're paying for AI tools — ChatGP
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-4-38bdf8?logo=tailwindcss)](https://tailwindcss.com)
 [![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-3ECF8E?logo=supabase)](https://supabase.com)
 [![Vercel](https://img.shields.io/badge/Deployed-Vercel-black?logo=vercel)](https://vercel.com)
+[![CI](https://github.com/Mithilesh-93919/stackaudit/actions/workflows/ci.yml/badge.svg)](https://github.com/Mithilesh-93919/stackaudit/actions/workflows/ci.yml)
 
 ---
 
@@ -23,58 +24,74 @@ Start a free audit at [/audit/new](https://stackaudit-fawn.vercel.app/audit/new)
 ## 📸 Screenshots
 
 ### Landing Page
-<!-- Screenshot: landing page hero with gradient background -->
-`/screenshots/01-landing-hero.png`
 
-### Audit Wizard — Tool Selection
-<!-- Screenshot: step 2 of the wizard, tool selection grid -->
-`/screenshots/02-wizard-tool-selection.png`
+![StackAudit landing page — dark hero with violet gradient and tool badges](public/screenshots/landing-desktop.png)
 
-### Audit Wizard — Plan Details
-<!-- Screenshot: step 3 with per-tool subscription configuration -->
-`/screenshots/03-wizard-plan-details.png`
+*Dark-mode hero: "Stop Paying for AI Tools Your Team Doesn't Use" — with tool badges for ChatGPT, Claude, Cursor, GitHub Copilot, and more.*
 
-### Results Dashboard
-<!-- Screenshot: executive savings dashboard with score ring and recommendations -->
-`/screenshots/04-results-dashboard.png`
+### Audit Wizard — Step 1: Team Context
 
-### Finding Card (Expanded)
-<!-- Screenshot: expanded recommendation card with action checklist -->
-`/screenshots/05-finding-card.png`
+![Audit wizard step 1 — team size selection with quick-select buttons](public/screenshots/audit-wizard-step1.png)
 
-### Shareable Report
-<!-- Screenshot: /audit/share/[token] public view -->
-`/screenshots/06-share-page.png`
+*Step 1 of 4: Company name and team size. Quick-select buttons (2, 5, 10, 25, 50, 100) or custom input. SSR pre-rendered — zero layout shift on load.*
 
-### Mobile View
-<!-- Screenshot: wizard and results on iPhone viewport -->
-`/screenshots/07-mobile-responsive.png`
+### Audit Wizard — Step 2: Select Your Stack
 
-### Dark Mode
-<!-- Screenshot: full page in dark mode -->
-`/screenshots/08-dark-mode.png`
+![Audit wizard step 2 — AI tool selection grid with check states](public/screenshots/audit-wizard-step2.png)
+
+*Step 2 of 4: Tool selection grid showing Cursor, GitHub Copilot, Claude, ChatGPT, Gemini, Windsurf, Anthropic API, and OpenAI API with live selection counter.*
+
+### Audit Wizard — Step 3: Plan Details
+
+![Audit wizard step 3 — per-tool subscription configuration](public/screenshots/audit-wizard-step3.png)
+
+*Step 3 of 4: Per-tool plan tier, seat count, monthly spend, and active seat configuration. Auto-recalculates spend on plan or seat changes.*
+
+### Results Dashboard — Dark Mode
+
+![Audit results dashboard in dark mode showing Save $270/month](public/screenshots/audit-results.png)
+
+*Executive results dashboard: Health Score **21/100**, **Save $270/month** ($3,240/year annualized). AI summary, current vs. optimized cost bar, and 3 dollar-quantified recommendations.*
+
+### Optimization Recommendations
+
+![Optimization recommendations list with HIGH PRIORITY Cursor + Copilot finding](public/screenshots/optimizations.png)
+
+*Recommendations sorted by financial impact. Each card shows tool names, severity badge, confidence, monthly savings, and annual savings.*
+
+### Light Mode vs. Dark Mode
+
+| Light Mode | Dark Mode |
+|---|---|
+| ![Light mode results](public/screenshots/light-mode.png) | ![Dark mode results](public/screenshots/dark-mode.png) |
+
+*Full system-aware theming with manual toggle. Both modes use the same violet accent palette.*
 
 ---
 
 ## 🎬 Demo Video
 
-**Suggested recording script (2–3 minutes):**
+> **Loom title:** `StackAudit — AI Spend Audit SaaS Demo (2 min)`  
+> **Loom description:** `A walkthrough of StackAudit, a deterministic AI spend audit tool built in 5 days. See the 4-step wizard, AI-powered savings report, shareable report links, and dark/light mode.`
 
-1. Open the live URL — show the landing page and scroll past features/pricing
-2. Click "Audit My Stack — Free"
-3. **Step 1:** Set team size to 10
-4. **Step 2:** Select ChatGPT, Claude, Cursor, GitHub Copilot
-5. **Step 3:** Adjust seat counts — set Cursor and Copilot to same team size, show the "idle seats" warning
-6. **Step 4:** Review screen — show the declared spend total
-7. Click "Run Audit" — let the loading animation play through
-8. Show the results dashboard: score ring, savings figure, annual savings
-9. Expand one finding card, read the action checklist
-10. Click "Share Audit Card" — copy the shareable link, open in a new tab
-11. Toggle dark/light mode
-12. Show the mobile layout (resize browser or DevTools responsive mode)
+### Recording Script (target: 2–3 minutes)
 
-**Ideal duration:** 2.5 minutes  
-**Recommended tools:** Loom, OBS, or QuickTime (macOS)
+| Timestamp | Action | Talking Point |
+|-----------|--------|---------------|
+| 0:00–0:20 | Open live URL, show landing page | "StackAudit audits your AI tool spend — no login required." |
+| 0:20–0:35 | Click "Audit My Stack — Free" | Show the smooth transition into the wizard |
+| 0:35–0:50 | Step 1: set team size to 10 | "We use team size to detect seat overprovisioning" |
+| 0:50–1:10 | Step 2: select ChatGPT, Claude, Cursor, GitHub Copilot | Point out the tool grid and check states |
+| 1:10–1:30 | Step 3: keep defaults, show idle seats warning | "The engine checks declared active seats vs. purchased seats" |
+| 1:30–1:40 | Step 4: show review screen with total spend | "$340/month declared" |
+| 1:40–1:55 | Click Run Audit — let loader play | "The loading animation covers real API processing" |
+| 1:55–2:15 | Show results dashboard | "Score 21/100, $270/month savings identified — 79% reduction" |
+| 2:15–2:30 | Expand Cursor + Copilot finding card | Show the action checklist inside the card |
+| 2:30–2:45 | Click Share Audit Card | "Public shareable link — send directly to your CFO" |
+| 2:45–2:55 | Toggle dark/light mode | Point out the theme persistence |
+| 2:55–3:00 | Resize to mobile in DevTools | Show the responsive layout |
+
+**Recommended tools:** Loom (easiest), OBS Studio, or QuickTime (macOS Screen Recording)
 
 ---
 
@@ -420,6 +437,7 @@ Given more time, these are the highest-priority improvements:
 | [DEVLOG.md](./DEVLOG.md) | Day-by-day development log |
 | [REFLECTION.md](./REFLECTION.md) | Engineering post-mortem and lessons learned |
 | [USER_INTERVIEWS.md](./USER_INTERVIEWS.md) | User research and discovery findings |
+| [DEMO_VIDEO.md](./DEMO_VIDEO.md) | Demo video recording script and metadata |
 | [TESTS.md](./TESTS.md) | Testing strategy and coverage targets |
 | [PRICING_DATA.md](./PRICING_DATA.md) | AI tool pricing data sources and methodology |
 | [PROMPTS.md](./PROMPTS.md) | Anthropic prompt library |
@@ -446,6 +464,9 @@ Given more time, these are the highest-priority improvements:
 - [x] AI summary falls back gracefully when API key is absent
 - [x] Rate limiting active on `/api/audit`
 - [x] Privacy Policy and Terms pages live
+- [x] Screenshots captured and committed to `public/screenshots/`
+- [x] README updated with embedded screenshots and demo video script
+- [x] DEMO_VIDEO.md recording guide complete
 - [x] All markdown documentation complete and consistent
 
 ---
