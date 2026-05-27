@@ -2,121 +2,193 @@
 
 ## Overview
 
-StackAudit is a multi-tenant SaaS application built on Next.js 15 App Router with a clean domain-driven architecture.
+StackAudit is a Next.js 16 SaaS application built on the App Router with a clean, domain-driven structure. There is no authentication layer in v1 — reports are identified by URL-safe share tokens and the full audit result is stored in Supabase.
 
 ---
 
 ## System Design
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                      Vercel Edge                        │
-├─────────────────────────────────────────────────────────┤
-│                   Next.js 15 App                        │
-│  ┌────────────────┐  ┌────────────────┐                 │
-│  │   Marketing    │  │   Dashboard    │                 │
-│  │  (public)      │  │  (authed)      │                 │
-│  └────────────────┘  └────────────────┘                 │
-│  ┌─────────────────────────────────────┐                │
-│  │          API Route Handlers          │                │
-│  │  /api/audit  /api/tools  /api/user  │                │
-│  └─────────────────────────────────────┘                │
-├─────────────────────────────────────────────────────────┤
-│                    lib/ (Business Logic)                 │
-│  audit-engine │ pricing │ ai │ utils │ validations      │
-├─────────────────────────────────────────────────────────┤
-│                   External Services                      │
-│  Supabase (DB + Auth) │ OpenAI │ Anthropic              │
-└─────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│                   Vercel (CDN + Serverless)                  │
+├─────────────────────────────────────────────────────────────┤
+│                    Next.js 16 App Router                     │
+│                                                              │
+│  Static (SSG)              │  Dynamic (SSR/Client)           │
+│  /                         │  /audit/new                     │
+│  /privacy                  │  /audit/share/[token]           │
+│  /terms                    │                                 │
+│                            │  API Routes (Node.js runtime)   │
+│                            │  POST /api/audit                │
+│                            │  GET  /api/audit/[token]        │
+│                            │  POST /api/leads                │
+│                            │  GET  /api/tools                │
+│                            │  GET  /api/health               │
+├─────────────────────────────────────────────────────────────┤
+│                     lib/ (Business Logic)                    │
+│  audit-engine.ts  │  audit/rules/  │  audit/pricing-data.ts  │
+│  ai.ts            │  supabase.ts   │  validations.ts          │
+│  backend-utils.ts │  utils.ts                                │
+├─────────────────────────────────────────────────────────────┤
+│                    External Services                         │
+│  Supabase (PostgreSQL + RLS)  │  Anthropic Claude Haiku      │
+│  Resend (transactional email)                                │
+└─────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## Route Architecture
+## Actual Route Architecture
 
 ```
 app/
-├── layout.tsx                    # Root layout (fonts, providers)
-├── page.tsx                      # Landing page (/)
-├── (marketing)/
-│   ├── pricing/page.tsx          # /pricing
-│   ├── about/page.tsx            # /about
-│   └── blog/                     # /blog/*
-├── (dashboard)/
-│   ├── layout.tsx                # Auth guard + sidebar layout
-│   ├── dashboard/page.tsx        # /dashboard
-│   ├── audit/
-│   │   ├── new/page.tsx          # /audit/new (wizard)
-│   │   └── [id]/page.tsx         # /audit/:id (report)
-│   ├── tools/page.tsx            # /tools
-│   └── settings/page.tsx        # /settings
+├── layout.tsx                       # Root layout (fonts, providers, OG metadata)
+├── page.tsx                         # Landing page — static SSG (/)
+├── globals.css                      # CSS custom properties + base styles
+│
+├── audit/
+│   ├── new/
+│   │   └── page.tsx                 # Audit wizard + results (/audit/new)
+│   └── share/
+│       └── [token]/
+│           └── page.tsx             # Public shared report (/audit/share/:token)
+│
+├── privacy/
+│   └── page.tsx                     # Privacy policy (/privacy)
+├── terms/
+│   └── page.tsx                     # Terms of service (/terms)
+│
 └── api/
-    ├── audit/route.ts            # POST /api/audit
-    ├── tools/route.ts            # GET /api/tools
-    └── user/route.ts             # GET/PATCH /api/user
+    ├── audit/
+    │   ├── route.ts                 # POST /api/audit
+    │   └── [token]/
+    │       └── route.ts             # GET /api/audit/:token
+    ├── leads/
+    │   └── route.ts                 # POST /api/leads
+    ├── tools/
+    │   └── route.ts                 # GET /api/tools
+    └── health/
+        └── route.ts                 # GET /api/health
 ```
 
 ---
 
 ## Key Design Decisions
 
-### 1. Route Groups
-- `(marketing)` — unauthenticated pages with landing layout
-- `(dashboard)` — authenticated pages with sidebar layout
-- Avoids layout bleed between contexts
+### 1. Deterministic Engine + Optional AI Enrichment
+
+The audit engine (`lib/audit-engine.ts`) is purely mathematical — no LLMs, no external calls. It runs 9 rules against structured input and produces a structured result. AI enrichment (`lib/ai.ts`) is a non-blocking post-processing step that wraps the result in a 2-sentence executive summary via Claude Haiku. If the AI call fails, times out (hard 8-second limit), or is unconfigured, the deterministic template summary is used transparently.
+
+This separation exists because financial recommendations must be **auditable and reproducible**. A user should be able to trace every dollar figure back to a formula, not an LLM output.
 
 ### 2. Server Components by Default
-- All components are RSC unless explicitly marked `"use client"`
-- Data fetching happens in Server Components
-- Client components only for interactivity (forms, charts, state)
 
-### 3. Multi-tenant Data Model
-- `organization` is the tenancy boundary
-- All data scoped to `organization_id` via RLS in Supabase
-- Users belong to one organization (v1), multiple (v2)
+All pages and layouts are React Server Components unless explicitly marked `"use client"`. The landing page (`app/page.tsx`) is fully static and SSG'd at build time. Only the audit wizard and result report use client boundaries for state and browser APIs.
 
-### 4. AI Tool Pricing Data
-- Stored in `data/pricing.json` for fast loading
-- Updated manually + via scheduled job
-- Source of truth for audit calculations
+### 3. No Auth in v1
 
-### 5. Audit Score
-- 0–100 composite score
-- Factors: redundancy, utilization, cost efficiency, overlap
-- Deterministic algorithm (reproducible)
+Reports are identified by 12-character URL-safe share tokens (72 bits of entropy, generated by PostgreSQL's `gen_random_bytes`). Anyone with the link can view the report. There is no user account system, no login flow, and no saved history per user. This was a deliberate scope constraint to ship the core product faster.
+
+### 4. Graceful Degradation at Every Layer
+
+| Layer | Failure | Behavior |
+|-------|---------|----------|
+| Anthropic API | Timeout / error / no key | Falls back to deterministic summary |
+| Resend email | Error / no key | Lead saved to Supabase; email silently skipped |
+| Rate limiter | Limit exceeded | Returns 429 with clear message |
+| DB write | Supabase error | Returns 500 with error message |
+| Zod validation | Invalid input | Returns 400 with field-level errors |
+
+### 5. Pricing Data as Static Code
+
+AI tool pricing is stored in `lib/audit/pricing-data.ts` as a TypeScript constant rather than a database table or JSON file. This gives full type safety at the rule layer, zero runtime cost, and easy quarterly updates. The tradeoff is that price changes require a code deploy.
+
+### 6. Security Headers
+
+```typescript
+// next.config.ts
+{ key: "X-Frame-Options", value: "DENY" },
+{ key: "X-Content-Type-Options", value: "nosniff" },
+{ key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+{ key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+```
 
 ---
 
 ## Data Flow
 
 ```
-User fills Audit Wizard
+User completes Audit Wizard (4 steps)
   → POST /api/audit
-    → runAudit() in lib/audit-engine.ts
-      → Lookups in data/pricing.json
-      → AI recommendations via lib/ai.ts
-      → Result stored in Supabase
-        → AuditReport rendered in /audit/:id
+    ├── Rate limit check (15/hr/IP)
+    ├── Zod validation of request body
+    ├── runAudit(input) — deterministic engine
+    │     ├── Per-subscription rules (overpaying, idle seats, downgrade, API alternative)
+    │     └── Cross-subscription rules (coding overlap, chat overlap)
+    ├── generateAuditSummary() — AI enrichment (optional)
+    └── INSERT into Supabase audits table
+          → Returns { shareToken, auditId, result }
+
+User clicks share link → GET /audit/share/:token
+  → Server Component fetches audit from Supabase by token
+  → Renders read-only report with Open Graph metadata
+
+User submits email → POST /api/leads
+  → INSERT into Supabase leads table
+  → Send confirmation email via Resend (if configured)
 ```
 
 ---
 
-## Security
+## Database Schema
 
-- All API routes validate session via Supabase JWT
-- Row Level Security enforced at DB level
-- Environment variables never exposed to client
-- CORS restricted to own domain in production
-- Input validated with Zod on all API routes
+Two tables with Row Level Security (RLS) enabled. Circular FK relationship resolved via deferred `ALTER TABLE` after both tables are created.
+
+```sql
+-- audits: one row per completed audit run
+create table audits (
+  id                              uuid primary key default gen_random_uuid(),
+  share_token                     text not null unique default generate_share_token(),
+  lead_id                         uuid, -- nullable, linked after email capture
+  team_size                       integer not null,
+  subscriptions_count             integer not null,
+  tool_ids                        text[] not null,
+  score                           integer not null check (score between 0 and 100),
+  total_current_monthly_spend     numeric(10, 2) not null,
+  total_recommended_monthly_spend numeric(10, 2) not null,
+  total_monthly_savings           numeric(10, 2) not null,
+  total_annual_savings            numeric(10, 2) not null,
+  recommendations_count           integer not null,
+  summary                         text not null,
+  result_json                     jsonb not null,
+  ip_hash                         text,
+  user_agent                      text,
+  created_at                      timestamptz not null default now()
+);
+
+-- leads: email captures linked to audits
+create table leads (
+  id                    uuid primary key default gen_random_uuid(),
+  audit_id              uuid not null,
+  email                 text not null,
+  company_name          text,
+  role                  text,
+  team_size             integer,
+  consented_to_marketing boolean not null default false,
+  created_at            timestamptz not null default now()
+);
+```
 
 ---
 
-## Performance Targets
+## Performance Targets (Achieved)
 
-| Metric | Target |
-|--------|--------|
-| LCP | < 1.5s |
-| FID | < 100ms |
-| CLS | < 0.1 |
-| Lighthouse | 95+ |
-| TTFB | < 200ms |
+| Metric | Target | Achieved |
+|--------|--------|---------|
+| Lighthouse Performance | 85+ | ✅ ~85+ |
+| Lighthouse Accessibility | 100 | ✅ 100 |
+| Lighthouse Best Practices | 100 | ✅ 100 |
+| Lighthouse SEO | 100 | ✅ 100 |
+| LCP | < 1.5s | ✅ |
+| CLS | < 0.05 | ✅ |
+| TBT | < 150ms | ✅ |

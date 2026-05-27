@@ -2,9 +2,24 @@
 
 import React, { useState, useEffect } from "react";
 import { runAudit } from "@/lib/audit-engine";
+import dynamic from "next/dynamic";
 import type { AuditInput, AuditResult } from "@/lib/audit/types";
 import { AuditWizard } from "@/components/audit/audit-wizard";
-import { AuditReport } from "@/components/audit/audit-report";
+
+const AuditReport = dynamic(
+  () => import("@/components/audit/audit-report").then((mod) => mod.AuditReport),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="mx-auto max-w-4xl px-4 py-8 flex items-center justify-center min-h-[400px]">
+        <div className="flex flex-col items-center gap-3">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+          <p className="text-sm text-muted-foreground font-semibold">Generating savings report...</p>
+        </div>
+      </div>
+    ),
+  }
+);
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Navbar } from "@/components/shared/navbar";

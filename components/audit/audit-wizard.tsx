@@ -291,15 +291,6 @@ export function AuditWizard({ onComplete }: AuditWizardProps) {
     onComplete(auditInput);
   };
 
-  if (!isMounted) {
-    return (
-      <div className="flex min-h-[400px] flex-col items-center justify-center gap-4">
-        <Progress value={30} className="w-[200px]" />
-        <p className="text-sm text-slate-400">Loading audit wizard draft...</p>
-      </div>
-    );
-  }
-
   // Helper to get total entered current spend
   const totalDraftSpend = formState.selectedTools.reduce((sum, tid) => {
     const sub = formState.subscriptions[tid];

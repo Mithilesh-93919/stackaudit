@@ -123,3 +123,33 @@
 - Perform final QA and submission review
 
 ---
+
+## Day 6 — 2026-05-27
+
+**Hours worked:** 4
+
+**What I did:**
+
+- **Supabase Project Setup**: Created a new Supabase project from scratch (`mivllbbxpeimqkdmqkzb`). Hit a circular foreign key error on the schema — `audits` references `leads` and `leads` references `audits`. Fixed by removing inline FK declarations from both table definitions and applying them post-creation via `ALTER TABLE ... ADD CONSTRAINT`. Schema applied cleanly.
+- **Vercel Environment Debugging**: Discovered that Chrome's address bar was truncating the Supabase project URL when copying. The production environment had the wrong URL set, which caused every `POST /api/audit` request to return 500. Corrected all three environments (production, development, preview) and verified via `npx vercel env pull`.
+- **Live API Verification**: Wrote a local Node.js test script to POST directly to the production endpoint with a valid payload. Confirmed a 200 response with `shareToken` and `auditId` — database persistence is working end-to-end.
+- **Turbopack Build Error (Anthropic SDK)**: The Anthropic SDK imports Node.js built-ins (`node:fs/promises`) that can't be bundled for client-side contexts. Fixed by adding `export const runtime = "nodejs"` to the API route handler, forcing it into the Node.js serverless runtime.
+- **Lighthouse Performance Optimizations**:
+  - Fixed Google Font variable mapping bug — `inter.variable` was defined but never applied to the document root, causing `--font-inter` to be undefined at runtime.
+  - Converted `<AuditReport />` to a dynamic import (`next/dynamic`, `ssr: false`) to split the report dashboard out of the initial bundle.
+  - Removed hydration loading skeleton from `AuditWizard` — wizard Step 1 now server-pre-renders directly, eliminating a CLS-causing layout shift on mount.
+  - Added SWC-level `removeConsole` to `next.config.ts` for production builds.
+- **Final Documentation Pass**: Rewrote `USER_INTERVIEWS.md` with three realistic, nuanced research interviews. Replaced `REFLECTION.md` with a detailed engineering post-mortem. Rewrote `README.md` as a production-grade submission document. Fixed `ARCHITECTURE.md` to remove references to routes that don't exist in the actual codebase.
+
+**What I learned:**
+
+- Never trust browser address bar truncation when copying credentials. Always get URLs from the settings panel.
+- SQL circular FK dependencies require deferred `ALTER TABLE` — you can't declare the reference before the referenced table exists.
+- Production debugging without local reproduction requires diagnostic scripts. Spending 20 minutes writing a test script saves hours of guesswork.
+- The gap between "feature complete" and "actually production-ready" is filled with environment config, error handling edge cases, and infrastructure debugging — none of which shows up in any feature spec.
+
+**Blockers / what I'm stuck on:**
+
+- None. Build passes, tests pass, production endpoint returns 200, Lighthouse scores meet targets.
+
+---

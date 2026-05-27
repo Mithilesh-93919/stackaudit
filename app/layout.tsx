@@ -61,7 +61,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={cn("font-sans", geist.variable)} suppressHydrationWarning>
+    <html lang="en" className={cn("font-sans", geist.variable, inter.variable)} suppressHydrationWarning>
       <body className="min-h-screen bg-background font-sans antialiased transition-colors duration-300">
         <ThemeProvider>
           <CurrencyProvider>

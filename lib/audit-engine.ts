@@ -17,6 +17,7 @@
  */
 
 import type { AuditInput, AuditResult, RuleContext } from "./audit/types";
+import type { AuditSummaryInput, AuditSummaryResult } from "./ai";
 import { getToolById } from "./audit/helpers";
 import {
   calculateScore,
@@ -27,7 +28,6 @@ import {
 } from "./audit/helpers";
 import { runSubscriptionRules, runCrossRules } from "./audit/rules/index";
 import { TOOL_REGISTRY } from "./audit/pricing-data";
-import { generateAuditSummary } from "./ai";
 
 export type { AuditInput, AuditResult } from "./audit/types";
 export type { ToolSubscription, Recommendation, ToolId } from "./audit/types";
@@ -64,7 +64,10 @@ export type { ToolSubscription, Recommendation, ToolId } from "./audit/types";
  */
 export async function runAudit(
   input: AuditInput,
-  options: { skipAiSummary?: boolean } = {}
+  options: {
+    skipAiSummary?: boolean;
+    aiSummaryProvider?: (input: AuditSummaryInput) => Promise<AuditSummaryResult>;
+  } = {}
 ): Promise<AuditResult> {
   validateInput(input);
 
@@ -132,12 +135,12 @@ export async function runAudit(
   let summary = deterministicSummary;
   let aiSummaryGenerated = false;
 
-  if (!options.skipAiSummary) {
+  if (!options.skipAiSummary && options.aiSummaryProvider) {
     const toolNames = input.subscriptions
       .map((s) => TOOL_REGISTRY[s.toolId]?.name ?? s.toolId)
       .filter(Boolean);
 
-    const aiResult = await generateAuditSummary({
+    const aiResult = await options.aiSummaryProvider({
       teamSize: input.teamSize,
       toolNames,
       totalCurrentMonthlySpend: roundCents(totalCurrentMonthlySpend),

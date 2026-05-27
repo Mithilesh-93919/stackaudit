@@ -29,7 +29,7 @@ create table if not exists audits (
   share_token                 text not null unique default generate_share_token(),
 
   -- Optional: link to a lead once they submit the email capture form
-  lead_id                     uuid references leads(id) on delete set null,
+  lead_id                     uuid,
 
   -- ── Audit inputs (sanitised — no PII) ─────────────────────────────────────
   team_size                   integer not null check (team_size >= 1),
@@ -151,3 +151,11 @@ create or replace function prune_rate_limit_events()
 returns void language sql as $$
   delete from rate_limit_events where created_at < now() - interval '1 hour';
 $$;
+
+-- ── Circular Reference Constraint ───────────────────────────────────────────
+alter table audits
+  add constraint fk_audits_lead_id
+  foreign key (lead_id)
+  references leads(id)
+  on delete set null;
+

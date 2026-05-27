@@ -4,6 +4,11 @@ const nextConfig: NextConfig = {
   // ── Strict Mode ──────────────────────────────────────────────────────────
   reactStrictMode: true,
 
+  // ── Optimizations ────────────────────────────────────────────────────────
+  compiler: {
+    removeConsole: process.env.NODE_ENV === "production" ? { exclude: ["error", "warn"] } : false,
+  },
+
   // ── Images ───────────────────────────────────────────────────────────────
   images: {
     formats: ["image/avif", "image/webp"],

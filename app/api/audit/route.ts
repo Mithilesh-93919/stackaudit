@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { runAudit } from "@/lib/audit-engine";
+import { generateAuditSummary } from "@/lib/ai";
 import { auditInputSchema } from "@/lib/validations";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { checkRateLimit, getClientIp } from "@/lib/backend-utils";
@@ -52,7 +53,9 @@ export async function POST(request: NextRequest) {
     // runAudit() always returns a valid result.
     // If ANTHROPIC_API_KEY is missing or the call times out, the fallback
     // deterministic summary is used transparently.
-    const auditResult = await runAudit(payload);
+    const auditResult = await runAudit(payload, {
+      aiSummaryProvider: generateAuditSummary,
+    });
 
     console.info(
       `[api/audit] Completed — score=${auditResult.score}, savings=$${auditResult.totalMonthlySavings}/mo, ` +
