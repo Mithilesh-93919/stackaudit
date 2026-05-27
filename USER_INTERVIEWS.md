@@ -1,4 +1,4 @@
-# USER_INTERVIEWS — Discovery Research
+# User Research — Discovery Interviews
 
 **Goal:** Understand whether uncontrolled AI spend is a real, painful problem — and whether people would actually change behavior because of it.
 

@@ -4,14 +4,14 @@
 
 **What I did:**
 - Initialized StackAudit project architecture
-- Setup Next.js + TypeScript + Tailwind
+- Set up Next.js + TypeScript + Tailwind
 - Configured shadcn/ui
 - Created scalable SaaS folder structure
 - Created GitHub repository
 - Built initial landing page foundation
 
 **What I learned:**
-- Learned how to structure a production-grade SaaS codebase using modular architecture
+- How to structure a SaaS codebase using a modular, domain-driven folder layout
 
 ---
 
@@ -20,24 +20,24 @@
 **Hours worked:** 6
 
 **What I did:**
-- **Deterministic Audit Engine**: Implemented a robust, modular, and explainable rule system under `lib/audit/`. Designed 9 core optimization rules spanning seat utilization, overpaying, vendor alternatives, and tool overlap.
-- **Static Pricing Registry**: Built a quarterly-maintainable pricing directory covering 8 popular AI developer tools (ChatGPT, Claude, Cursor, Copilot, Windsurf, etc.) and model token pricing metrics.
-- **Robust Test Suite**: Established a complete Jest test harness under `tests/unit/lib/audit-engine.test.ts` verifying all rule calculations and financial aggregations. Achieved 17/17 successful passing assertions.
-- **Interactive Multi-Step Wizard**: Designed a premium, Product Hunt-quality wizard (`components/audit/audit-wizard.tsx`) with team size controls, dynamic tool selectors, custom monthly spend overrides, and localStorage draft persistence.
-- **Executive Results Dashboard**: Built a beautiful analytics dashboard (`components/audit/audit-report.tsx` and `components/audit/finding-card.tsx`) with a circular cost health gauge, optimized vs. current spend comparison bars, detailed finding drawers with user checklists, and a clean "Already Optimized" congratulations panel.
-- **Loading & State Integrations**: Connected everything inside `app/audit/new/page.tsx` with smooth loader animations that step through analytical logs, providing a polished, professional startup-caliber UX.
-- **Production Build Integrity**: Successfully verified that the entire application compiles and builds in production with 0 TypeScript compiler warnings.
+- **Deterministic Audit Engine**: Implemented a modular, explainable rule system under `lib/audit/`. Designed 9 core optimization rules spanning seat utilization, overpaying, vendor alternatives, and tool overlap.
+- **Static Pricing Registry**: Built a quarterly-maintainable pricing directory covering 8 AI developer tools (ChatGPT, Claude, Cursor, Copilot, Windsurf, etc.) and model token pricing metrics.
+- **Unit Test Suite**: Established a Jest test harness under `tests/unit/lib/audit-engine.test.ts` verifying all rule calculations and financial aggregations. 17/17 assertions pass.
+- **Multi-Step Audit Wizard**: Built the audit wizard (`components/audit/audit-wizard.tsx`) with team size controls, dynamic tool selectors, custom monthly spend overrides, and localStorage draft persistence.
+- **Results Dashboard**: Built the results dashboard (`components/audit/audit-report.tsx` and `components/audit/finding-card.tsx`) with a circular cost health gauge, optimized vs. current spend comparison, finding cards with action checklists, and an "Already Optimized" state.
+- **Loading & State Integrations**: Connected everything inside `app/audit/new/page.tsx` with loader animations that step through diagnostic messages during API processing.
+- **Production Build Verification**: Confirmed the application compiles and builds with zero TypeScript errors.
 
 **What I learned:**
-- Custom, rule-based financial models are far superior to LLM-based calculations for high-trust finance platforms because they guarantee perfect mathematical defensibility and 100% reproducibility.
-- Precise HTML structure and semantic DOM ID markup make complex CSS forms highly accessible and exceptionally easy to run automated end-to-end tests against.
+- Rule-based financial models are preferable to LLM-based calculations for high-trust recommendations because they guarantee mathematical defensibility and reproducibility.
+- Semantic DOM structure and accessible ID markup make complex forms significantly easier to test and maintain.
 
 **Blockers / what I'm stuck on:**
-- None! The core engine, tests, wizard flow, and visual analytics dashboards are fully complete, type-checked, and completely operational.
+- None. The core engine, tests, wizard flow, and results dashboard are complete, type-checked, and operational.
 
 **Plan for tomorrow:**
 - Integrate Supabase database logging to store historical report records.
-- Set up Supabase Auth user profiles to protect premium dashboard features.
+- Set up Supabase Auth user profiles to protect authenticated dashboard features.
 
 ---
 
@@ -46,20 +46,20 @@
 **Hours worked:** 2
 
 **What I did:**
-- **CSS Variable Collision Fix (Critical Bug)**: Discovered and resolved a critical theming bug where two separate `:root` and `.dark` CSS variable blocks existed in `globals.css`. The second block (shadcn defaults using `oklch` color space) was overwriting the first block's carefully curated violet/purple primary palette with a plain grey scheme. Removed the conflicting block and consolidated sidebar variables using the correct HSL values — the UI now renders with the intended violet accent brand colors in both light and dark mode.
-- **Heading Hierarchy Fix (SEO)**: Fixed a semantic HTML violation in `audit-report.tsx` where an `<h1>` ("Save X/month") lived inside a component that was already rendered below a page-level `<h1>` ("Audit Your AI Stack"). Downgraded to `<h2>` to satisfy the single-`<h1>`-per-page rule for both SEO and accessibility.
-- **Invalid Tailwind Class Fix**: Removed three instances of `h-4.5` / `w-4.5` in `lead-capture.tsx` — these are not valid Tailwind utility classes (no decimal size token exists in the default scale). Replaced with `h-4 w-4`.
-- **SSR-Safe Browser API**: Wrapped the `confirm()` dialog in `audit-wizard.tsx` with a `typeof window !== "undefined"` guard to prevent a crash if the component ever renders in a server-side context.
-- **TypeScript Type Improvement**: Changed the `updateSubscription` helper's value parameter type from the unsafe `any` to `unknown` — eliminated the implicit escape hatch while remaining compatible with shadcn's `Select.onValueChange` signature which passes `string | null`.
-- **Pricing Section Added**: Added a proper `#pricing` anchor section to `app/page.tsx` (showcasing the free beta plan). The navbar had a "Pricing" link that previously scrolled to nothing — this now lands on a polished pricing card with feature list and CTA.
+- **CSS Variable Collision Fix (Critical Bug)**: Discovered and resolved a theming bug where two separate `:root` and `.dark` CSS variable blocks existed in `globals.css`. The second block (shadcn defaults using `oklch` color space) was overwriting the first block's violet/purple primary palette with a plain grey scheme. Removed the conflicting block and consolidated sidebar variables using the correct HSL values — the UI now renders with the intended violet accent brand colors in both light and dark mode.
+- **Heading Hierarchy Fix (SEO)**: Fixed a semantic HTML violation in `audit-report.tsx` where an `<h1>` ("Save X/month") lived inside a component already rendered below a page-level `<h1>` ("Audit Your AI Stack"). Downgraded to `<h2>` to satisfy the single-`<h1>`-per-page rule for both SEO and accessibility.
+- **Invalid Tailwind Class Fix**: Removed three instances of `h-4.5` / `w-4.5` in `lead-capture.tsx` — not valid Tailwind utility classes. Replaced with `h-4 w-4`.
+- **SSR-Safe Browser API**: Wrapped the `confirm()` dialog in `audit-wizard.tsx` with a `typeof window !== "undefined"` guard to prevent a crash in server-side rendering contexts.
+- **TypeScript Type Improvement**: Changed the `updateSubscription` helper's value parameter type from `any` to `unknown` — eliminates the implicit escape hatch while remaining compatible with shadcn's `Select.onValueChange` signature.
+- **Pricing Section Added**: Added a `#pricing` anchor section to `app/page.tsx`. The navbar had a "Pricing" link that previously scrolled to nothing — this now lands on a pricing card with feature list and CTA.
 - **Production TypeScript Verification**: Ran `tsc --noEmit` to confirm zero compiler errors across the entire codebase after all changes.
 
 **What I learned:**
-- CSS cascade order matters enormously — even well-organized files can have late-cascading blocks silently overwriting earlier ones. Always audit CSS variable declarations end-to-end before shipping.
+- CSS cascade order matters — even well-organized files can have late-cascading blocks silently overwriting earlier ones. Always audit CSS variable declarations end-to-end before shipping.
 - TypeScript `unknown` is almost always the right choice over `any` for function parameter escape hatches — it forces callers to narrow the type themselves while still accepting any input.
 
 **Blockers / what I'm stuck on:**
-- None — all identified bugs resolved. Codebase is clean, type-safe, and production-ready.
+- None — all identified bugs resolved. Codebase is type-safe and ready for the backend integration phase.
 
 **Plan for tomorrow:**
 - Integrate Supabase database to persist audit reports with unique share tokens.
@@ -76,12 +76,12 @@
 - Continued building the audit flow UI and connected it with the deterministic audit engine
 - Improved the multi-step onboarding experience and added localStorage persistence so users do not lose progress after refreshing
 - Built the audit results dashboard with savings breakdowns, optimization recommendations, and confidence indicators
-- Added polished loading states and transitions to improve the overall SaaS product feel
+- Added loading states and transitions to improve the overall product feel
 - Refactored several UI components into reusable modules to keep the codebase maintainable
 
 **What I learned:**
-- Learned how important UX flow and visual hierarchy are in making analytical products feel trustworthy and easy to use
-- Improved my understanding of component composition and state management patterns in Next.js App Router projects
+- UX flow and visual hierarchy are important in making analytical products feel trustworthy and easy to navigate
+- Improved understanding of component composition and state management patterns in Next.js App Router projects
 
 **Blockers / what I'm stuck on:**
 - Needed to think carefully about how to present optimization recommendations clearly without overwhelming the user
@@ -108,8 +108,8 @@
 - Created Privacy Policy and Terms of Service pages and cleaned up several production-readiness issues identified during architecture review
 
 **What I learned:**
-- Learned how to structure production-safe backend systems that fail gracefully when third-party APIs are unavailable
-- Improved my understanding of CI pipelines, metadata handling, and deployment-oriented application design
+- How to structure backend systems that fail gracefully when third-party APIs are unavailable
+- Improved understanding of CI pipelines, metadata handling, and deployment-oriented application design
 
 **Blockers / what I'm stuck on:**
 - Need to complete deployment testing and optimize Lighthouse performance before final submission
@@ -139,7 +139,7 @@
   - Converted `<AuditReport />` to a dynamic import (`next/dynamic`, `ssr: false`) to split the report dashboard out of the initial bundle.
   - Removed hydration loading skeleton from `AuditWizard` — wizard Step 1 now server-pre-renders directly, eliminating a CLS-causing layout shift on mount.
   - Added SWC-level `removeConsole` to `next.config.ts` for production builds.
-- **Final Documentation Pass**: Rewrote `USER_INTERVIEWS.md` with three realistic, nuanced research interviews. Replaced `REFLECTION.md` with a detailed engineering post-mortem. Rewrote `README.md` as a production-grade submission document. Fixed `ARCHITECTURE.md` to remove references to routes that don't exist in the actual codebase.
+- **Final Documentation Pass**: Rewrote `USER_INTERVIEWS.md` with three realistic, nuanced research interviews. Replaced `REFLECTION.md` with a detailed engineering post-mortem. Rewrote `README.md` as a submission document. Fixed `ARCHITECTURE.md` to remove references to routes that don't exist in the actual codebase.
 
 **What I learned:**
 

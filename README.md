@@ -13,7 +13,7 @@ StackAudit helps startup teams audit what they're paying for AI tools — ChatGP
 
 ---
 
-## 🌐 Live Demo
+## Live Demo
 
 **Production URL:** [https://stackaudit-fawn.vercel.app](https://stackaudit-fawn.vercel.app)
 
@@ -21,7 +21,7 @@ Start a free audit at [/audit/new](https://stackaudit-fawn.vercel.app/audit/new)
 
 ---
 
-## 📸 Screenshots
+## Screenshots
 
 ### Landing Page
 
@@ -51,7 +51,7 @@ Start a free audit at [/audit/new](https://stackaudit-fawn.vercel.app/audit/new)
 
 ![Audit results dashboard in dark mode showing Save $270/month](public/screenshots/audit-results.png)
 
-*Executive results dashboard: Health Score **21/100**, **Save $270/month** ($3,240/year annualized). AI summary, current vs. optimized cost bar, and 3 dollar-quantified recommendations.*
+*Results dashboard: Health Score **21/100**, **Save $270/month** ($3,240/year annualized). AI summary, current vs. optimized cost bar, and 3 dollar-quantified recommendations.*
 
 ### Optimization Recommendations
 
@@ -69,7 +69,7 @@ Start a free audit at [/audit/new](https://stackaudit-fawn.vercel.app/audit/new)
 
 ---
 
-## 🎬 Demo Video
+## Demo Video
 
 > **Loom title:** `StackAudit — AI Spend Audit SaaS Demo (2 min)`  
 > **Loom description:** `A walkthrough of StackAudit, a deterministic AI spend audit tool built in 5 days. See the 4-step wizard, AI-powered savings report, shareable report links, and dark/light mode.`
@@ -79,7 +79,7 @@ Start a free audit at [/audit/new](https://stackaudit-fawn.vercel.app/audit/new)
 | Timestamp | Action | Talking Point |
 |-----------|--------|---------------|
 | 0:00–0:20 | Open live URL, show landing page | "StackAudit audits your AI tool spend — no login required." |
-| 0:20–0:35 | Click "Audit My Stack — Free" | Show the smooth transition into the wizard |
+| 0:20–0:35 | Click "Audit My Stack — Free" | Show the transition into the wizard |
 | 0:35–0:50 | Step 1: set team size to 10 | "We use team size to detect seat overprovisioning" |
 | 0:50–1:10 | Step 2: select ChatGPT, Claude, Cursor, GitHub Copilot | Point out the tool grid and check states |
 | 1:10–1:30 | Step 3: keep defaults, show idle seats warning | "The engine checks declared active seats vs. purchased seats" |
@@ -95,7 +95,7 @@ Start a free audit at [/audit/new](https://stackaudit-fawn.vercel.app/audit/new)
 
 ---
 
-## ✨ Feature Overview
+## Feature Overview
 
 | Feature | Description |
 |---------|-------------|
@@ -104,7 +104,7 @@ Start a free audit at [/audit/new](https://stackaudit-fawn.vercel.app/audit/new)
 | **AI Executive Summary** | Claude Haiku-powered 2-sentence summary; deterministic fallback if API unavailable |
 | **Cost Health Score** | 0–100 composite score factoring redundancy, utilization, and overlap |
 | **Dollar-Quantified Recommendations** | Every finding shows exact monthly and annual savings |
-| **Shareable Reports** | Public `/audit/share/[token]` URL — share with your CFO |
+| **Shareable Reports** | Public `/audit/share/[token]` URL — shareable with finance or leadership |
 | **Lead Capture** | Email capture on results page, persisted to Supabase + Resend email delivery |
 | **Dark / Light Mode** | Full system-aware theming with manual override |
 | **Multi-Currency Display** | USD, INR, EUR, GBP, CAD, AUD via `Intl.NumberFormat` |
@@ -114,7 +114,7 @@ Start a free audit at [/audit/new](https://stackaudit-fawn.vercel.app/audit/new)
 
 ---
 
-## 🏗 Architecture Overview
+## Architecture Overview
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -157,7 +157,7 @@ Start a free audit at [/audit/new](https://stackaudit-fawn.vercel.app/audit/new)
 
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 
 | Layer | Technology | Notes |
 |-------|-----------|-------|
@@ -175,7 +175,7 @@ Start a free audit at [/audit/new](https://stackaudit-fawn.vercel.app/audit/new)
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 stackaudit/
@@ -225,7 +225,7 @@ stackaudit/
 
 ---
 
-## 🚀 Local Setup
+## Local Setup
 
 ### Prerequisites
 
@@ -290,7 +290,7 @@ Open [http://localhost:3000](http://localhost:3000)
 
 ---
 
-## 🗃 Database Schema
+## Database Schema
 
 Two core tables, both with Row Level Security enabled:
 
@@ -302,7 +302,7 @@ The schema uses a deferred `ALTER TABLE` pattern to handle the circular FK relat
 
 ---
 
-## ⚙️ Development Commands
+## Development Commands
 
 ```bash
 npm run dev          # Start dev server (Turbopack)
@@ -317,9 +317,9 @@ npm run format       # Prettier format
 
 ---
 
-## 🧪 Testing
+## Testing
 
-The audit engine — the core financial logic — is comprehensively unit-tested with Jest:
+The audit engine — the core financial logic — is unit-tested with Jest:
 
 ```bash
 npm test
@@ -335,7 +335,7 @@ See [TESTS.md](./TESTS.md) for the full testing strategy.
 
 ---
 
-## 🔄 CI/CD Pipeline
+## CI/CD Pipeline
 
 Every push to `main` triggers the GitHub Actions workflow at `.github/workflows/ci.yml`:
 
@@ -348,7 +348,7 @@ Vercel auto-deploys on merge to `main`. Preview deployments are generated for ev
 
 ---
 
-## 🧠 Audit Engine Explained
+## Audit Engine
 
 The engine in `lib/audit/` is fully deterministic — no AI, no randomness. It runs 9 rules against a structured input:
 
@@ -367,7 +367,7 @@ Each rule returns a `Recommendation` with title, description, monthly savings, s
 
 ---
 
-## 🤖 AI Summary Explained
+## AI Summary
 
 `lib/ai.ts` wraps Anthropic's Claude (`claude-haiku-4-5`) to produce a 2-sentence executive summary from the deterministic engine's output.
 
@@ -377,11 +377,11 @@ Each rule returns a `Recommendation` with title, description, monthly savings, s
 3. On success, the AI summary replaces the template summary
 4. On failure (timeout, rate limit, missing key), the deterministic template is used transparently
 
-**Why claude-haiku-4-5:** Fastest Anthropic model, ~$0.0003 per call, typically responds in under 2 seconds. The `aiSummaryGenerated` boolean in the API response surfaces which path was taken.
+**Why claude-haiku-4-5:** Fastest Anthropic model, ~$0.0003 per call, typically responds in under 2 seconds. The `aiSummaryGenerated` boolean in the API response indicates which path was taken.
 
 ---
 
-## 🔒 Security & Abuse Protection
+## Security & Abuse Protection
 
 | Protection | Implementation |
 |-----------|---------------|
@@ -394,16 +394,16 @@ Each rule returns a `Recommendation` with title, description, monthly savings, s
 
 ---
 
-## 📊 Lighthouse Scores
+## Lighthouse Scores
 
 Measured on production deployment (https://stackaudit-fawn.vercel.app):
 
 | Category | Score |
 |----------|-------|
-| ⚡ Performance | ~85+ |
-| ♿ Accessibility | 100 |
-| ✅ Best Practices | 100 |
-| 🔍 SEO | 100 |
+| Performance | ~85+ |
+| Accessibility | 100 |
+| Best Practices | 100 |
+| SEO | 100 |
 
 **Key performance optimizations applied:**
 - `next/font/google` with `display: swap` for Inter + Geist
@@ -414,14 +414,14 @@ Measured on production deployment (https://stackaudit-fawn.vercel.app):
 
 ---
 
-## 🗺 Future Improvements
+## Future Improvements
 
 Given more time, these are the highest-priority improvements:
 
 1. **User Accounts & Audit History** — Supabase Auth, saved audit sessions, a returning-user dashboard
-2. **Usage Data Integration** — Browser extension or OAuth integrations to import *actual* usage data rather than declared usage
+2. **Usage Data Integration** — Browser extension or OAuth integrations to import actual usage data rather than declared usage
 3. **Pricing Data Pipeline** — Quarterly automated pricing updates (scraper or manual process with changelogs)
-4. **Export to PDF/CSV** — CFO-friendly downloadable audit reports
+4. **Export to PDF/CSV** — Downloadable audit reports for finance review
 5. **Team Comparison Mode** — Multiple audits compared side-by-side
 6. **Email Summaries** — Automated monthly re-audit reminders via Resend
 7. **Stripe Integration** — Paid tiers once willingness-to-pay is validated
@@ -429,10 +429,10 @@ Given more time, these are the highest-priority improvements:
 
 ---
 
-## 📖 Additional Documentation
+## Additional Documentation
 
 | File | Purpose |
-|------|---------|
+|------|---------| 
 | [ARCHITECTURE.md](./ARCHITECTURE.md) | System design and key decisions |
 | [DEVLOG.md](./DEVLOG.md) | Day-by-day development log |
 | [REFLECTION.md](./REFLECTION.md) | Engineering post-mortem and lessons learned |
@@ -447,7 +447,7 @@ Given more time, these are the highest-priority improvements:
 
 ---
 
-## ✅ Submission Checklist
+## Submission Checklist
 
 - [x] Production deployment live at `stackaudit-fawn.vercel.app`
 - [x] Custom Supabase project with full schema applied
@@ -471,6 +471,6 @@ Given more time, these are the highest-priority improvements:
 
 ---
 
-## 📄 License
+## License
 
 Private — All rights reserved © 2026 StackAudit

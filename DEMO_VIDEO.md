@@ -38,9 +38,8 @@ A concise guide for recording and publishing the StackAudit product demo.
 > "This is StackAudit — an AI spend audit tool for startup teams. It analyzes what you're paying for tools like ChatGPT, Cursor, and GitHub Copilot, and tells you exactly where you're wasting money. No account required."
 
 **Visual elements to highlight:**
-- The animated headline "Stop Paying for AI Tools Your Team Doesn't Use"
+- The headline "Stop Paying for AI Tools Your Team Doesn't Use"
 - Tool badge row at the bottom (ChatGPT Plus, Claude Pro, Cursor, etc.)
-- "Now in beta — free audits available" pill
 
 ---
 
@@ -96,7 +95,7 @@ A concise guide for recording and publishing the StackAudit product demo.
 **Action:** Click **"Run Audit"**. Let the full loading animation play through — it cycles through diagnostic steps ("Analyzing seat capacity...", "Running overlap detection...").
 
 **Talking point:**
-> "The engine processes on the server — this takes under a second. The loading animation provides the product feel."
+> "The engine processes on the server — this takes under a second. The loading animation cycles through diagnostic steps while the request completes."
 
 ---
 

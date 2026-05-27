@@ -23,7 +23,7 @@
 
 **One-liner:** StackAudit is the AI spend management tool for startups — find redundancies, optimize costs, and justify your AI budget in minutes.
 
-**Category:** AI Spend Management (new category we're creating)
+**Category:** AI Spend Management
 
 ---
 

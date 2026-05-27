@@ -23,23 +23,23 @@ All marketing copy for the landing page, ads, emails, and social.
 
 ## Value Props (3-column section)
 
-### 🔍 Instant AI Audit
+### Instant AI Audit
 *Connect your tools. Get a full spend breakdown in 60 seconds.*
 
-### 💰 Find Hidden Waste
-*Spot overlapping tools, unused seats, and overpaid tiers instantly.*
+### Find Hidden Waste
+*Spot overlapping tools, unused seats, and overpaid tiers.*
 
-### 📊 Actionable Recommendations
+### Actionable Recommendations
 *Get specific, dollar-quantified recommendations — not generic advice.*
 
 ---
 
 ## Social Proof
 
-> *"We were paying for ChatGPT Plus, Claude Pro, AND Perplexity for the same 2 developers. StackAudit caught it in 2 minutes."*
+> *"We were paying for ChatGPT Plus, Claude Pro, and Perplexity for the same two developers. StackAudit flagged the overlap in minutes."*
 > — Alex, CTO at Series A SaaS
 
-> *"Saved $1,800/month in the first week. This should exist for every startup."*
+> *"Identified $1,800/month in redundant subscriptions on the first audit."*
 > — Jamie, Founder
 
 ---
